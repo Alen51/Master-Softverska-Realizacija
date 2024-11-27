@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Library.Models
 {
-    internal class Node
+    public class Node
     {
+        public int Id { get; set; }
+        public List<Kvar> Kvarovi { get; set; } 
+
+
     }
 }
