@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using SoftverskaRealizacijaBackend.Dto;
+using SoftverskaRealizacijaBackend.Helpers;
 using SoftverskaRealizacijaBackend.Infrastructure;
 using SoftverskaRealizacijaBackend.Interfaces;
+using SoftverskaRealizacijaBackend.Models;
 
 namespace SoftverskaRealizacijaBackend.Sevices
 {
@@ -17,9 +19,14 @@ namespace SoftverskaRealizacijaBackend.Sevices
             _dbContext = dbContext;
             _secretKey = configuration.GetSection("SecretKey");
         }
-        public Task<ClientDto> AddClient(ClientDto newClientDto)
+        public async Task<ClientDto> AddClient(ClientDto newClientDto)
         {
-            throw new NotImplementedException();
+            Client newClient = _mapper.Map<Client>(newClientDto);
+            newClient.Password= ClientHelper.HashPassword(newClientDto.Password);
+            _dbContext.Clienti.Add(newClient);
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<ClientDto>(newClient);
         }
 
         public Task DeleteKorisnik(long id)

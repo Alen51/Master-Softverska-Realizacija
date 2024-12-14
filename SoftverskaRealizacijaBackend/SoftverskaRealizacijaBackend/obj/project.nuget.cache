@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "cGAddzSxJr31/enq3uX4UgsECBFTdBB5YxhSfBkEewdZyw+yFDluzU4MpJSMnHpNm9OGJo0S3bHCp0d7BmeECQ==",
+  "dgSpecHash": "N+2Z62EAd2BRHXHDNfA7u/I4sda3IQD8ByAUc0CodEzPYaVXnRPs4T9wgo5CdfwITqPcC3HDpV5/Lm6myK+SXA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Alen\\Desktop\\Sve\\Master Softverska Realizacija\\SoftverskaRealizacijaBackend\\SoftverskaRealizacijaBackend\\SoftverskaRealizacijaBackend.csproj",
   "expectedPackageFiles": [
@@ -50,6 +50,7 @@
     "C:\\Users\\Alen\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\Alen\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Alen\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
+    "C:\\Users\\Alen\\.nuget\\packages\\portable.bouncycastle\\1.9.0\\portable.bouncycastle.1.9.0.nupkg.sha512",
     "C:\\Users\\Alen\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "C:\\Users\\Alen\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
     "C:\\Users\\Alen\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
