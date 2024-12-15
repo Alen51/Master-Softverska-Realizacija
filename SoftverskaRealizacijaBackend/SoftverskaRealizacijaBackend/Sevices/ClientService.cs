@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SoftverskaRealizacijaBackend.Dto;
 using SoftverskaRealizacijaBackend.Helpers;
 using SoftverskaRealizacijaBackend.Infrastructure;
@@ -29,34 +30,54 @@ namespace SoftverskaRealizacijaBackend.Sevices
             return _mapper.Map<ClientDto>(newClient);
         }
 
-        public Task DeleteKorisnik(long id)
+        public async Task DeleteClient(long id)
+        {
+            Client deleteClient = _dbContext.Clienti.Find(id);
+            _dbContext.Clienti.Remove(deleteClient);
+            await _dbContext.SaveChangesAsync();
+
+
+        }
+
+        public async Task<List<ClientDto>> GetAllClients()
+        {
+            List<Client> korisnici = await _dbContext.Clienti.ToListAsync();
+            return _mapper.Map<List<ClientDto>>(korisnici);
+        }
+
+        public async Task<ClientDto> GetClientById(long id)
+        {
+            Client findClient = await _dbContext.Clienti.FindAsync(id);
+            return _mapper.Map<ClientDto>(findClient);
+        }
+
+        public async Task<ResponseDto> Login(LoginDto loginClientDto)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<ClientDto>> GetAllClients()
+        public Task<ResponseDto> Registration(ClientDto registerClient)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ClientDto> GetKorisnikById(long id)
+        public async Task<ClientDto> UpdateClient(long id, ClientDto updateClientDto)
         {
-            throw new NotImplementedException();
-        }
+            Client updateClient = await _dbContext.Clienti.FindAsync(id);
 
-        public Task<ResponseDto> Login(LoginDto loginKorisnikDto)
-        {
-            throw new NotImplementedException();
-        }
+            if (updateClient == null)
+            {
+                return null;
+            }
+            /*
+            if (!ClientHelper.IsClientFieldsValid(updateClientDto))
+                return null;*/
 
-        public Task<ResponseDto> Registration(ClientDto registerKorisnik)
-        {
-            throw new NotImplementedException();
-        }
+            updateClient.Password = ClientHelper.HashPassword(updateClientDto.Password);
+            ClientHelper.UpdateClientFields(updateClient, updateClientDto);
+            await _dbContext.SaveChangesAsync();
 
-        public Task<ClientDto> UpdateKorisnik(long id, ClientDto updateClientDto)
-        {
-            throw new NotImplementedException();
+            return _mapper.Map<ClientDto>(updateClient);
         }
     }
 }

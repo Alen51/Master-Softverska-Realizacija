@@ -11,6 +11,8 @@ namespace SoftverskaRealizacijaBackend.Infrastructure
         public DbSet<Kvar> Kvraovi { get; set; }
         public DbSet<NodeConnection> NodeConnections { get; set; }
 
+        public CRUDContext(DbContextOptions options) : base(options) { }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -168,3 +168,5 @@ C:\Users\Alen\Desktop\Sve\Master Softverska Realizacija\SoftverskaRealizacijaBac
 C:\Users\Alen\Desktop\Sve\Master Softverska Realizacija\SoftverskaRealizacijaBackend\SoftverskaRealizacijaBackend\obj\Debug\net8.0\SoftverskaRealizacijaBackend.pdb
 C:\Users\Alen\Desktop\Sve\Master Softverska Realizacija\SoftverskaRealizacijaBackend\SoftverskaRealizacijaBackend\obj\Debug\net8.0\SoftverskaRealizacijaBackend.genruntimeconfig.cache
 C:\Users\Alen\Desktop\Sve\Master Softverska Realizacija\SoftverskaRealizacijaBackend\SoftverskaRealizacijaBackend\obj\Debug\net8.0\ref\SoftverskaRealizacijaBackend.dll
+C:\Users\Alen\Desktop\Sve\Master Softverska Realizacija\SoftverskaRealizacijaBackend\SoftverskaRealizacijaBackend\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Alen\Desktop\Sve\Master Softverska Realizacija\SoftverskaRealizacijaBackend\SoftverskaRealizacijaBackend\bin\Debug\net8.0\BouncyCastle.Crypto.dll
