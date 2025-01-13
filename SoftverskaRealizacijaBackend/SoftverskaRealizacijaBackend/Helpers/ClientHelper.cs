@@ -1,6 +1,8 @@
-﻿using Org.BouncyCastle.Crypto.Generators;
+﻿using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto.Generators;
 using SoftverskaRealizacijaBackend.Dto;
 using SoftverskaRealizacijaBackend.Models;
+using static SoftverskaRealizacijaBackend.Models.Enumerations;
 namespace SoftverskaRealizacijaBackend.Helpers
 {
     public class ClientHelper
@@ -15,8 +17,22 @@ namespace SoftverskaRealizacijaBackend.Helpers
             Client.TipKorisnika = ClientDto.TipKorisnika;
             Client.Email = ClientDto.Email;
             Client.Password = HashPassword(ClientDto.Password);
-            Client.Name = ClientDto.Name;
+            Client.Name = ClientDto.FullName;
             
+        }
+
+        public static bool IsClientFieldsValid(ClientDto ClientDto)
+        {
+            if (string.IsNullOrEmpty(ClientDto.FullName))
+                return false;
+            if (string.IsNullOrEmpty(ClientDto.Email))
+                return false;
+            if (string.IsNullOrEmpty(ClientDto.Password))
+                return false;
+            
+            
+
+            return true;
         }
     }
 }
