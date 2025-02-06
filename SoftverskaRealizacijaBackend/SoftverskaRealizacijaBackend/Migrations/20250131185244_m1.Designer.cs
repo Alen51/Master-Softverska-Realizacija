@@ -12,8 +12,8 @@ using SoftverskaRealizacijaBackend.Infrastructure;
 namespace SoftverskaRealizacijaBackend.Migrations
 {
     [DbContext(typeof(CRUDContext))]
-    [Migration("20250113165509_first")]
-    partial class first
+    [Migration("20250131185244_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,6 +96,12 @@ namespace SoftverskaRealizacijaBackend.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CoordinateX")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CoordinateY")
+                        .HasColumnType("int");
 
                     b.Property<int?>("NodeConnectionId")
                         .HasColumnType("int");

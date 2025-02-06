@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SoftverskaRealizacijaBackend.Infrastructure;
+using SoftverskaRealizacijaBackend.Interfaces;
 using SoftverskaRealizacijaBackend.Mapping;
+using SoftverskaRealizacijaBackend.Sevices;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -79,27 +81,17 @@ namespace SoftverskaRealizacijaBackend
 
             services.AddCors(options =>
             {
-                var reactApp = Configuration["ReactApp"];
-                options.AddPolicy(name: _cors, builder =>
-                {
-                    builder.WithOrigins(reactApp)
-                           .AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowCredentials();
-                });
+                options.AddPolicy("AllowFrontend",
+                    policy => policy.WithOrigins("http://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             });
-            /*
-            var emailVerifyConfiguration = Configuration
-                 .GetSection("EmailVerifyConfiguration")
-                 .Get<EmailVerifyConfiguration>();
-            services.AddSingleton(emailVerifyConfiguration);*/
+            
 
-            /*
-            services.AddScoped<IArtikalService, ArtikalService>();
-            services.AddScoped<IKorisnikService, KorisnikService>();
-            services.AddScoped<IPorudzbinaService, PorudzbinaService>();
-            services.AddScoped<IEmailService, EmailVerifyService>();
-            */
+            services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<IMapService, MapService>();
+
             //registracija db contexta u kontejneru zavisnosti, njegov zivotni vek je Scoped
             services.AddDbContext<CRUDContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CRUD_Context")));
             //Registracija mapera u kontejneru, zivotni vek singleton
@@ -128,7 +120,7 @@ namespace SoftverskaRealizacijaBackend
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebProjekat v1"));
             }
-
+            app.UseCors("AllowFrontend");
             app.UseHttpsRedirection();
 
             app.UseRouting();

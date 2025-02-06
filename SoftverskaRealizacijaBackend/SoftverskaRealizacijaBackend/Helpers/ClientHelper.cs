@@ -1,15 +1,20 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Crypto.Generators;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using SoftverskaRealizacijaBackend.Dto;
 using SoftverskaRealizacijaBackend.Models;
+
 using static SoftverskaRealizacijaBackend.Models.Enumerations;
+
 namespace SoftverskaRealizacijaBackend.Helpers
 {
     public class ClientHelper
     {
         public static string HashPassword(string password)
         {
-            return crypto.Security.ComputeHash(password, "aaa");
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         public static void UpdateClientFields(Client Client, ClientDto ClientDto)
@@ -17,7 +22,7 @@ namespace SoftverskaRealizacijaBackend.Helpers
             Client.TipKorisnika = ClientDto.TipKorisnika;
             Client.Email = ClientDto.Email;
             Client.Password = HashPassword(ClientDto.Password);
-            Client.Name = ClientDto.FullName;
+            Client.fullName = ClientDto.FullName;
             
         }
 

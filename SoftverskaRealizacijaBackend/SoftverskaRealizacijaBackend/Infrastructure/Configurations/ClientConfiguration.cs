@@ -10,7 +10,7 @@ namespace SoftverskaRealizacijaBackend.Infrastructure.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.Property(x => x.Name).HasMaxLength(50);
+            builder.Property(x => x.fullName).HasMaxLength(50);
             
             builder.HasIndex(x => x.Email).IsUnique();
 

@@ -60,7 +60,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
         public async Task<ResponseDto> Login(LoginDto loginClientDto)
         {
             Client loginClient = new Client();
-            if (string.IsNullOrEmpty(loginClientDto.Email) && string.IsNullOrEmpty(loginClientDto.Lozinka))
+            if (string.IsNullOrEmpty(loginClientDto.Email) && string.IsNullOrEmpty(loginClientDto.Password))
             {
                 return new ResponseDto("Niste uneli email ili lozinku.");
             }
@@ -73,7 +73,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
 
 
 
-            if (BCrypt.ReferenceEquals(loginClientDto.Lozinka, loginClient.Password)) //(BCrypt.Net.BCrypt.Verify(loginClientDto.Lozinka, loginClient.Lozinka))
+            if (BCrypt.Net.BCrypt.Verify(loginClientDto.Password, loginClient.Password)) //(BCrypt.Net.BCrypt.Verify(loginClientDto.Lozinka, loginClient.Lozinka))
             {
                 List<Claim> claims = new List<Claim>();
                 if (loginClient.TipKorisnika == TipKorisnika.Administrator)

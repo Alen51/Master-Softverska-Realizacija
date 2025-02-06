@@ -3,7 +3,7 @@
     public class NodeConnection
     {
         public int Id { get; set; }
-        public Node TopNode { get; set; }
-        public List<Node> Nodes { get; set; }
+        public int StartPinId { get; set; }
+        public int EndPinId { get; set; }
     }
 }

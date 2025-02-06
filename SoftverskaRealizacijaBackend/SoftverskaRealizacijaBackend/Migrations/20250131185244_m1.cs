@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SoftverskaRealizacijaBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class m1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,6 +69,8 @@ namespace SoftverskaRealizacijaBackend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CoordinateX = table.Column<int>(type: "int", nullable: false),
+                    CoordinateY = table.Column<int>(type: "int", nullable: false),
                     NodeConnectionId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
