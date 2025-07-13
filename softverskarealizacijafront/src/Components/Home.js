@@ -5,6 +5,8 @@ import { Icon, divIcon, point } from "leaflet";
 import { getMapInfo, addNode, addNodeConnection, GetNodes } from "../Services/MapService";
 import { useNavigate } from "react-router-dom";
 import { GetAllUsers } from "../Services/ClientService";
+import axios from "axios";
+
 
 const Home = () => {
 
@@ -23,7 +25,7 @@ const Home = () => {
     const addPin = async(latlng)=>{}
     const addLine = async(startPin,endPin)=>{}
     const reportProblem = async (pinId) => {}
-
+    const newMarker = [45.2396,19.8227]
     const getNodes = async () => {
             setLoading(true);
 
@@ -37,6 +39,8 @@ const Home = () => {
             }
     }
 
+
+    
     const handlePinSelect = (pin) => {
         if (selectedPins.length === 0) {
           setSelectedPins([pin]);
@@ -78,6 +82,9 @@ const Home = () => {
                   <td>
                     {node.longitude}
                   </td>
+                  <td>
+                    { node.latitude}
+                  </td>
                 </tr>
               ))}
             </table>
@@ -101,21 +108,15 @@ const Home = () => {
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
                                 <MapClickHandler addingMode={addingMode} addPin={addPin} />
-                                {nodes.map((node) => (
-                                  <Marker key={node.id} position={[node.latitude, node.longitude]} icon={customIcon}>
+                                
+                                {nodes.map((node)=>(
+                                  <Marker  position={[node.latitude, node.longitude]} icon={customIcon} >
                                     
                                     
-                                    eventHandlers={{
-                                      click: () => handlePinSelect(node), // Select pin on click
-                                    }}
-                            
-                                    <Popup>
-                                      <div>
-                                        <p><strong>Pin ID:</strong> {node.id}</p>
-                                        <button onClick={() => reportProblem(node.id)}>Report Problem</button>
-                                      </div>
-                                    </Popup>
+                                    
                                   </Marker>
+                                  
+                                  
                                 ))}
                 
                                 {lines.map((line) => {
