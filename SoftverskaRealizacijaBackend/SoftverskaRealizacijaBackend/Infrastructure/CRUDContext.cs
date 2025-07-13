@@ -18,6 +18,30 @@ namespace SoftverskaRealizacijaBackend.Infrastructure
             base.OnModelCreating(modelBuilder);
             //Kazemo mu da pronadje sve konfiguracije u Assembliju i da ih primeni nad bazom
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CRUDContext).Assembly);
+
+            modelBuilder.Entity<Node>().HasData(
+                new Node
+                {
+                    Id = 1,
+                    Latitude = 45.2396,
+                    Longitude = 19.8227,
+                },
+                new Node
+                {
+                    Id = 2,
+                    Latitude = 45.2396,
+                    Longitude = 19.8297,
+                }
+            );
+
+            modelBuilder.Entity<NodeConnection>().HasData(
+                new NodeConnection
+                {
+                    Id = 1,
+                    StartPinId = 1,
+                    EndPinId = 2,
+                }
+            );
         }
     }
 

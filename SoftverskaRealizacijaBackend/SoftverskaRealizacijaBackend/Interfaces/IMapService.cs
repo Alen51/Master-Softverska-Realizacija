@@ -5,8 +5,10 @@ namespace SoftverskaRealizacijaBackend.Interfaces
 {
     public interface IMapService
     {
-        Task<MapDataDto> GetMapData();
+        Task<List<NodeDto>> GetAllNodes();
+        Task<List<NodeConnectionDto>> GetAllNodeConnections();
         Task<Node> AddNode(Node nweNode);
         Task<NodeConnection> AddNodeConnection(NodeConnection newNodeConnection);
+        Task<MapDataDto> GetMapDataDto();
     }
 }

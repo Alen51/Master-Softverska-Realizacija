@@ -70,3 +70,26 @@ export const EditProfile = async (updatedKorisnikJSON, id, token) => {
       alert("Error while profile data edit")
   }
 }
+
+export const GetAllUsers = async () => {
+  const GET_USERS_URL = '/users/getAll'
+  try{
+      const {data} = await axios.get(
+          `${process.env.REACT_APP_API_BACK}${GET_USERS_URL}`,
+          {
+              headers:{
+                  'Content-Type' : 'application/json',
+                  
+              },
+          }
+      );
+      const korisnici = data.map(korisnik => {
+          return new ClientDto(korisnik);
+      })
+      return korisnici;
+  }catch(err){
+      console.log(err);
+      alert("Nesto se desilo prilikom dobavljanja prodavaca");
+      return null;
+  }
+}

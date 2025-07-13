@@ -2,18 +2,22 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo, addNode, addNodeConnection } from "../../Services/MapService";
+import { getMapInfo, addNode, addNodeConnection, getNodes, getNodeConnections, GetNodes, GetNodeConnections } from "../../Services/MapService";
 import { useNavigate } from "react-router-dom";
-
+import NodeDto from "../../Models/NodeDto";
+import axios from "../../api/axios";
 
 const AdminMap = () =>{
 
-    const [pins, setPins] = useState([]);
+      const [nodes, setNodes] = useState([]);
+      const[test,setTest] = useState([]);
       const [lines, setLines] = useState([]);
       const [addingMode, setAddingMode] = useState(false);
       const [selectedPins, setSelectedPins] = useState([]);
-    
-      const navigate = useNavigate();
+      const [loading, setLoading] = useState(false); // Track loading
+
+      //koriste se za prikaz poruke i njen kontent
+      
       //const token = sessionStorage.getItem('token')
     
     
@@ -23,26 +27,48 @@ const AdminMap = () =>{
         iconSize: [38, 38] // size of the icon
       });
     
-      useEffect(() => {
-        const fetchData = async () => {
-          const data = getMapInfo();
-          setPins(data.pins || []);
-          setLines(data.lines || []);
-        };
-    
-        fetchData();
-      }, []);
+      
+        
+          const getMapData = async()=> {
+            setLoading(true);
+            const n = await GetNodes();
+            const l = await GetNodeConnections();
+            
+            const cleanN = n.map((node)=>({
+              id: node.id,
+              latitude: node.latitude,
+              longitude: node.longitude,
+            }))
+
+            if(n!==null && l!==null){
+              setNodes(cleanN);
+              setLines([...lines,l]);
+              
+              console.log("P",n);
+              console.log("L",l);
+              console.log("pins:",nodes);
+              console.log("lines",lines);
+              
+              setLoading(false);
+            }
+          }
+          getMapData();         
+      
     
               
     
       const addPin = async (latlng) => {
-        const newPin = addNode(JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng }));
-        setPins([...pins, newPin]);
+        
+        const nodeJSON=JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng });
+        console.log(nodeJSON);
+        const newPin = addNode(nodeJSON);
+        console.log("New node:" + newPin);
+        //setPins([...pins, newPin]);
       }
     
       const addLine = async (startPin, endPin) => {
         const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
-        setLines([...lines,newLine]);
+        //setLines([...lines,newLine]);
           
       };
       
@@ -67,7 +93,24 @@ const AdminMap = () =>{
     
     
         return(
-            <>
+          <div className="verification-container">
+            <h1 color="red" className="ui blue center aligned header">
+
+            Dobrodosli na stranicu
+
+            </h1>
+            {loading && 
+            <div className="loader-container">
+                <div className="ui active inverted dimmer">
+                    <div className="ui large text loader">
+                        Ucitavanje mape
+                    </div>
+                </div>
+            </div>
+                
+            }
+            {!loading && (  
+                <>
                 <h1 className="ui blue center aligned icon header">
                     <i className="briefcase icon"></i>
                     Dobro dosli na stranicu 
@@ -81,6 +124,9 @@ const AdminMap = () =>{
                 <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
                     {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
                 </button>
+                <button className="ui blue button" onClick={() => getMapData()}>
+                    Load map data
+                </button>
                 
                 </div>
                 <div></div>
@@ -93,28 +139,26 @@ const AdminMap = () =>{
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     <MapClickHandler addingMode={addingMode} addPin={addPin} />
-                    {pins.map((pin, index) => (
-                      <Marker>
-                        key={index}
-                        position={pin}
-                        icon={customIcon}
+                    {nodes.map((node) => (
+                      <Marker key={node.id} position={[node.latitude, node.longitude]} icon={customIcon}>
+                        
                         
                         eventHandlers={{
-                          click: () => handlePinSelect(pin), // Select pin on click
+                          click: () => handlePinSelect(node), // Select pin on click
                         }}
                 
                         <Popup>
                           <div>
-                            <p><strong>Pin ID:</strong> {pin.id}</p>
-                            <button onClick={() => reportProblem(pin.id)}>Report Problem</button>
+                            <p><strong>Pin ID:</strong> {node.id}</p>
+                            <button onClick={() => reportProblem(node.id)}>Report Problem</button>
                           </div>
                         </Popup>
-                        </Marker>
+                      </Marker>
                     ))}
     
                     {lines.map((line) => {
-                      const startPin = pins.find(p => p.id === line.startPinId);
-                      const endPin = pins.find(p => p.id === line.endPinId);
+                      const startPin = nodes.find(p => p.id === line.startPinId);
+                      const endPin = nodes.find(p => p.id === line.endPinId);
                       return startPin && endPin ? (
                         <Polyline
                           key={line.id}
@@ -128,7 +172,11 @@ const AdminMap = () =>{
                     })}
                 </MapContainer>
                 </div>
+              
             </>
+            )}
+        </div>
+            
         );
 }
 

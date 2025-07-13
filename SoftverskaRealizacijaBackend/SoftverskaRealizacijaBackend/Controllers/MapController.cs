@@ -16,11 +16,25 @@ namespace SoftverskaRealizacijaBackend.Controllers
             _mapService = mapService;
         }
 
-        [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getMapData")]
+        public async Task<IActionResult> GetMapData()
         {
-            MapDataDto mapa = await _mapService.GetMapData();
-            return Ok(mapa);
+            MapDataDto m = await _mapService.GetMapDataDto();
+            return Ok(m);
+        }
+
+        [HttpGet("getAllNodes")]
+        public async Task<IActionResult> GetAllNodes()
+        {
+            List<NodeDto> nodes = await _mapService.GetAllNodes();
+            return Ok(nodes);
+        }
+
+        [HttpGet("getAllNodeConnections")]
+        public async Task<IActionResult> GetAllNodeConnections()
+        {
+            List<NodeConnectionDto> nodeConnections = await _mapService.GetAllNodeConnections();
+            return Ok(nodeConnections);
         }
 
         [HttpPost("addNode")]

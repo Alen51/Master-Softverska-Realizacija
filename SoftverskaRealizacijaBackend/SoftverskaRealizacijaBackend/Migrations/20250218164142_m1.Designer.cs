@@ -12,7 +12,7 @@ using SoftverskaRealizacijaBackend.Infrastructure;
 namespace SoftverskaRealizacijaBackend.Migrations
 {
     [DbContext(typeof(CRUDContext))]
-    [Migration("20250131185244_m1")]
+    [Migration("20250218164142_m1")]
     partial class m1
     {
         /// <inheritdoc />
@@ -37,17 +37,17 @@ namespace SoftverskaRealizacijaBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TipKorisnika")
                         .HasColumnType("int");
+
+                    b.Property<string>("fullName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -97,20 +97,29 @@ namespace SoftverskaRealizacijaBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CoordinateX")
-                        .HasColumnType("int");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
 
-                    b.Property<int>("CoordinateY")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("NodeConnectionId")
-                        .HasColumnType("int");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NodeConnectionId");
-
                     b.ToTable("Nodes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Latitude = 45.239600000000003,
+                            Longitude = 19.822700000000001
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Latitude = 45.239600000000003,
+                            Longitude = 19.829699999999999
+                        });
                 });
 
             modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.NodeConnection", b =>
@@ -121,14 +130,23 @@ namespace SoftverskaRealizacijaBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("TopNodeId")
+                    b.Property<int>("EndPinId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartPinId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TopNodeId");
-
                     b.ToTable("NodeConnections");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            EndPinId = 2,
+                            StartPinId = 1
+                        });
                 });
 
             modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.Kvar", b =>
@@ -140,7 +158,7 @@ namespace SoftverskaRealizacijaBackend.Migrations
                         .IsRequired();
 
                     b.HasOne("SoftverskaRealizacijaBackend.Models.Node", "Node")
-                        .WithMany("Kvarovi")
+                        .WithMany()
                         .HasForeignKey("NodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -148,34 +166,6 @@ namespace SoftverskaRealizacijaBackend.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("Node");
-                });
-
-            modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.Node", b =>
-                {
-                    b.HasOne("SoftverskaRealizacijaBackend.Models.NodeConnection", null)
-                        .WithMany("Nodes")
-                        .HasForeignKey("NodeConnectionId");
-                });
-
-            modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.NodeConnection", b =>
-                {
-                    b.HasOne("SoftverskaRealizacijaBackend.Models.Node", "TopNode")
-                        .WithMany()
-                        .HasForeignKey("TopNodeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TopNode");
-                });
-
-            modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.Node", b =>
-                {
-                    b.Navigation("Kvarovi");
-                });
-
-            modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.NodeConnection", b =>
-                {
-                    b.Navigation("Nodes");
                 });
 #pragma warning restore 612, 618
         }

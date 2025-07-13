@@ -8,6 +8,8 @@ namespace SoftverskaRealizacijaBackend.Mapping
     {
         public MappingProfile() { 
             CreateMap<Client, ClientDto>().ReverseMap();
+            CreateMap<Node, NodeDto>().ReverseMap();
+            CreateMap<NodeConnection, NodeConnectionDto>().ReverseMap();
            // CreateMap<Client, ClientDto>().ReverseMap();
             //CreateMap<Client, ClientDto>().ReverseMap();
         }

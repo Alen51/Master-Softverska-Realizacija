@@ -103,6 +103,20 @@ namespace SoftverskaRealizacijaBackend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Nodes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Latitude = 45.239600000000003,
+                            Longitude = 19.822700000000001
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Latitude = 45.239600000000003,
+                            Longitude = 19.829699999999999
+                        });
                 });
 
             modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.NodeConnection", b =>
@@ -122,6 +136,14 @@ namespace SoftverskaRealizacijaBackend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NodeConnections");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            EndPinId = 2,
+                            StartPinId = 1
+                        });
                 });
 
             modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.Kvar", b =>
@@ -133,7 +155,7 @@ namespace SoftverskaRealizacijaBackend.Migrations
                         .IsRequired();
 
                     b.HasOne("SoftverskaRealizacijaBackend.Models.Node", "Node")
-                        .WithMany("Kvarovi")
+                        .WithMany()
                         .HasForeignKey("NodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -141,11 +163,6 @@ namespace SoftverskaRealizacijaBackend.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("Node");
-                });
-
-            modelBuilder.Entity("SoftverskaRealizacijaBackend.Models.Node", b =>
-                {
-                    b.Navigation("Kvarovi");
                 });
 #pragma warning restore 612, 618
         }

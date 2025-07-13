@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SoftverskaRealizacijaBackend.Dto;
 using SoftverskaRealizacijaBackend.Infrastructure;
 using SoftverskaRealizacijaBackend.Interfaces;
@@ -10,9 +11,11 @@ namespace SoftverskaRealizacijaBackend.Sevices
     {
 
         private readonly CRUDContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public MapService(CRUDContext dbContext)
+        public MapService(IMapper mapper, CRUDContext dbContext)
         {
+            _mapper = mapper;
             _dbContext = dbContext;
         }
 
@@ -44,17 +47,29 @@ namespace SoftverskaRealizacijaBackend.Sevices
            
         }
 
-        public async Task<MapDataDto> GetMapData()
+        public async Task<List<NodeConnectionDto>> GetAllNodeConnections()
         {
-            MapDataDto mapDataDto = new MapDataDto();
-            mapDataDto.Lines=new List<NodeConnection>();
-            mapDataDto.Pins=new List<Node>();
+            List<NodeConnection> nc= await _dbContext.NodeConnections.ToListAsync();
+            return _mapper.Map<List<NodeConnectionDto>>(nc);
+        }
 
-            mapDataDto.Lines = await _dbContext.NodeConnections.ToListAsync();
-            mapDataDto.Pins = await _dbContext.Nodes.ToListAsync();
+        public async Task<List<NodeDto>> GetAllNodes()
+        {
+            List<Node> n = await _dbContext.Nodes.ToListAsync();
+            return _mapper.Map<List<NodeDto>>(n);
+        }
 
+        public async Task<MapDataDto> GetMapDataDto()
+        {
+             MapDataDto map = new MapDataDto();
+            map.Lines = new List<NodeConnection>();
+            map.Pins = new List<Node>();
 
-            return mapDataDto;
+            map.Pins= await _dbContext.Nodes.ToListAsync();
+            map.Lines = await _dbContext.NodeConnections.ToListAsync();
+
+            return map;
+
         }
     }
 }

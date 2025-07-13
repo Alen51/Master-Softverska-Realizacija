@@ -1,23 +1,53 @@
 import axios from "../api/axios";
+import NodeConnectionDto from "../Models/NodeConnectionDto";
+import NodeDto from "../Models/NodeDto";
 
-export const getMapInfo = async()=>{
-    const GET_MAP_URI="/map/getAll"
+export const GetNodes = async()=>{
+    const GET_MAP_URI="/map/getAllNodes"
 
     try{
         const { data } = await axios.get(
             `${process.env.REACT_APP_API_BACK}${GET_MAP_URI}`,
                 {
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type' : 'application/json',
                         
                     },
-                    withCredentials: true
+                    
                 }
             );
             console.log(data)
-        return data;
+            const nodes=data.map(node=>{
+                return new NodeDto(node);
+            })
+        return nodes;
     }catch(err){
-        alert("Nesto se desilo prilikom dobavljanja informacija o mapi");
+        alert("Nesto se desilo prilikom dobavljanja informacija o nodovima");
+        return null;
+    }
+}
+
+export const GetNodeConnections = async()=>{
+    const GET_MAP_URI="/map/getAllNodeConnections"
+
+    try{
+        const { data } = await axios.get(
+            `${process.env.REACT_APP_API_BACK}${GET_MAP_URI}`,
+                {
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        
+                    },
+                   
+                }
+            );
+            console.log(data)
+        const lines=data.map(line=>{
+            return new NodeConnectionDto(line);
+        })    
+        return lines;
+    }catch(err){
+        alert("Nesto se desilo prilikom dobavljanja informacija o linijama");
         return null;
     }
 }
@@ -37,6 +67,7 @@ export const addNode = async(node)=>{
                 withCredentials:true 
             }
         );
+        console.log(data);
         return data;
 
     }catch(err){
