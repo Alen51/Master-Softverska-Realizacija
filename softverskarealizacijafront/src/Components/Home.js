@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo, addNode, addNodeConnection, GetNodes } from "../Services/MapService";
+import { getMapInfo, addNode, GetNodeConnections, GetNodes } from "../Services/MapService";
 import { useNavigate } from "react-router-dom";
-import { GetAllUsers } from "../Services/ClientService";
-import axios from "axios";
+
+
 
 
 const Home = () => {
@@ -25,7 +25,8 @@ const Home = () => {
     const addPin = async(latlng)=>{}
     const addLine = async(startPin,endPin)=>{}
     const reportProblem = async (pinId) => {}
-    const newMarker = [45.2396,19.8227]
+   
+
     const getNodes = async () => {
             setLoading(true);
 
@@ -36,6 +37,19 @@ const Home = () => {
                 
                 setLoading(false);
                 console.log("Nodes:",nodes);
+            }
+    }
+
+    const getLines = async () => {
+            setLoading(true);
+
+            const data = await GetNodeConnections();
+            
+            if(data !== null){
+                setLines(data);
+                
+                setLoading(false);
+                console.log("Lines:",lines);
             }
     }
 
@@ -87,13 +101,27 @@ const Home = () => {
                   </td>
                 </tr>
               ))}
+              {lines.map((line)=>(
+                <tr>
+                  <td>
+                    {line.startPinId}
+                  </td>
+                  <td>
+                    {line.endPinId}
+                  </td>
+                  
+                </tr>
+              ))}
             </table>
             <div className="buttons-flex">
                             <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
                                 {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
                             </button>
                             <button className="ui blue button" onClick={() => getNodes()}>
-                                Get Map Data
+                                Get Nodes
+                            </button>
+                            <button className="ui blue button" onClick={() => getLines()}>
+                                Get Lines
                             </button>
                             
                             
@@ -110,9 +138,20 @@ const Home = () => {
                                 <MapClickHandler addingMode={addingMode} addPin={addPin} />
                                 
                                 {nodes.map((node)=>(
-                                  <Marker  position={[node.latitude, node.longitude]} icon={customIcon} >
+                                  <Marker key={node.id} position={[node.latitude, node.longitude]} icon={customIcon} 
+                                          eventHandlers={{
+                                              click: () => handlePinSelect(node), // Select pin on click
+                                            }}
+                                  >
                                     
-                                    
+                                   
+                            
+                                    <Popup>
+                                      <div>
+                                        <p><strong>Pin ID:</strong> {node.id}</p>
+                                        <button onClick={() => reportProblem(node.id)}>Report Problem</button>
+                                      </div>
+                                    </Popup>
                                     
                                   </Marker>
                                   
