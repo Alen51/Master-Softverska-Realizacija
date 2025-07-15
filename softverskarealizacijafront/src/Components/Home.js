@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo, addNode, GetNodeConnections, GetNodes } from "../Services/MapService";
+import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection } from "../Services/MapService";
 import { useNavigate } from "react-router-dom";
 
 
@@ -22,12 +22,34 @@ const Home = () => {
             iconSize: [38, 38] // size of the icon
           });
         
-    const addPin = async(latlng)=>{}
-    const addLine = async(startPin,endPin)=>{}
-    const reportProblem = async (pinId) => {}
-   
+    const addPin = async (latlng) => {
+            
+            const nodeJSON=JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng });
+            console.log(nodeJSON);
+            const newPin = addNode(nodeJSON);
+            console.log("New node:" + newPin);
+            setPins([...pins, newPin]);
+            
+    }
+        
+    const addLine = async (startPin, endPin) => {
+            const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
+            setLines([...lines,newLine]);
+            
+              
+    };
+
+    const reportProblem = async (pinId) => {
+        try {
+          await fetch(`/api/map-data/report-problem/${pinId}`, { method: 'POST' });
+          alert(`Reported problem for pin ID: ${pinId}`);
+        } catch (error) {
+          console.error('Failed to report problem:', error);
+        }
+    };
 
     const getNodes = async () => {
+            setNodes([]);
             setLoading(true);
 
             const data = await GetNodes();
@@ -42,7 +64,7 @@ const Home = () => {
 
     const getLines = async () => {
             setLoading(true);
-
+            setLines([]);
             const data = await GetNodeConnections();
             
             if(data !== null){
@@ -52,6 +74,8 @@ const Home = () => {
                 console.log("Lines:",lines);
             }
     }
+
+    
 
 
     
@@ -123,6 +147,9 @@ const Home = () => {
                             <button className="ui blue button" onClick={() => getLines()}>
                                 Get Lines
                             </button>
+                            <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
+                              {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
+                            </button>
                             
                             
                             </div>
@@ -149,7 +176,7 @@ const Home = () => {
                                     <Popup>
                                       <div>
                                         <p><strong>Pin ID:</strong> {node.id}</p>
-                                        <button onClick={() => reportProblem(node.id)}>Report Problem</button>
+                                        <button className="ui red button" onClick={() => reportProblem(node.id)}>Report Problem</button>
                                       </div>
                                     </Popup>
                                     

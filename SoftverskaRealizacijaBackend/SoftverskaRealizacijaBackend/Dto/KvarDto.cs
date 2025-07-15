@@ -1,10 +1,9 @@
 ﻿using static SoftverskaRealizacijaBackend.Models.Enumerations;
 
-namespace SoftverskaRealizacijaBackend.Models
+namespace SoftverskaRealizacijaBackend.Dto
 {
-    public class Kvar
+    public class KvarDto
     {
-        
         public int Id { get; set; }
         public DateTime VremePrijave { get; set; }
         public DateTime VremeOtkanjanja { get; set; }

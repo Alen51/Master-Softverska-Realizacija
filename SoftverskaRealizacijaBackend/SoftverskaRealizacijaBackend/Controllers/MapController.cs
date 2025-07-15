@@ -37,6 +37,13 @@ namespace SoftverskaRealizacijaBackend.Controllers
             return Ok(nodeConnections);
         }
 
+        [HttpGet("getKvarList")]
+        public async Task<IActionResult> GetKvarList()
+        {
+            List<KvarDto> kvarList = await _mapService.GetKvarListDto();
+            return Ok(kvarList);
+        }
+
         [HttpPost("addNode")]
         public async Task<IActionResult> AddNode([FromBody] Node node)
         {
@@ -47,6 +54,12 @@ namespace SoftverskaRealizacijaBackend.Controllers
         public async Task<IActionResult> AddNodeConnnection([FromBody] NodeConnection nodeConnection)
         {
             return Ok(await _mapService.AddNodeConnection(nodeConnection));
+        }
+
+        [HttpPost("addKvar")]
+        public async Task<IActionResult> AddKvar([FromBody] Kvar kvar)
+        {
+            return Ok(await _mapService.AddKvar(kvar));
         }
     }
 }

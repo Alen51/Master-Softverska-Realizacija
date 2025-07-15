@@ -98,3 +98,11 @@ export const addNodeConnection = async(nodeConnection)=>{
         return null;
     }
 }
+
+export const addKvar = async(newKvar)=>{
+
+}
+
+export const getKvarList = async()=>{
+    
+}

@@ -10,5 +10,7 @@ namespace SoftverskaRealizacijaBackend.Interfaces
         Task<Node> AddNode(Node nweNode);
         Task<NodeConnection> AddNodeConnection(NodeConnection newNodeConnection);
         Task<MapDataDto> GetMapDataDto();
+        Task<Kvar> AddKvar(Kvar newKvar);
+        Task<List<KvarDto>> GetKvarListDto();
     }
 }
