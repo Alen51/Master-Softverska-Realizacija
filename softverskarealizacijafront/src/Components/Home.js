@@ -27,15 +27,15 @@ const Home = () => {
             const nodeJSON=JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng });
             console.log(nodeJSON);
             const newPin = addNode(nodeJSON);
-            console.log("New node:" + newPin);
-            setPins([...pins, newPin]);
+            console.log("New node:" , newPin);
+            //setNodes([...nodes, newPin]);
             
     }
         
     const addLine = async (startPin, endPin) => {
             const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
-            setLines([...lines,newLine]);
-            
+            //setLines([...lines,newLine]);
+            console.log("New line:", newLine);
               
     };
 
@@ -122,7 +122,7 @@ const Home = () => {
                     {node.longitude}
                   </td>
                   <td>
-                    { node.latitude}
+                    {typeof( node.latitude)}
                   </td>
                 </tr>
               ))}

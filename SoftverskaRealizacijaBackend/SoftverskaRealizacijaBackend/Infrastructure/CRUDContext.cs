@@ -8,7 +8,7 @@ namespace SoftverskaRealizacijaBackend.Infrastructure
 
         public DbSet<Client> Clienti { get; set; }
         public DbSet<Node> Nodes { get; set; }
-        public DbSet<Kvar> Kvraovi { get; set; }
+        public DbSet<Kvar> Kvarovi { get; set; }
         public DbSet<NodeConnection> NodeConnections { get; set; }
 
         public CRUDContext(DbContextOptions options) : base(options) { }

@@ -19,9 +19,17 @@ namespace SoftverskaRealizacijaBackend.Sevices
             _dbContext = dbContext;
         }
 
-        public Task<Kvar> AddKvar(Kvar newKvar)
+        public async Task<Kvar> AddKvar(Kvar newKvar)
         {
-            throw new NotImplementedException();
+            if(_dbContext.Kvarovi.Contains(newKvar))
+            {
+                return null;
+            }
+
+            _dbContext.Kvarovi.Add(newKvar);
+            await _dbContext.SaveChangesAsync();
+
+            return newKvar;
         }
 
         public async Task<Node> AddNode(Node newNode)
@@ -64,9 +72,10 @@ namespace SoftverskaRealizacijaBackend.Sevices
             return _mapper.Map<List<NodeDto>>(n);
         }
 
-        public Task<List<KvarDto>> GetKvarListDto()
+        public async Task<List<KvarDto>> GetKvarListDto()
         {
-            throw new NotImplementedException();
+            List<Kvar> k = await _dbContext.Kvarovi.ToListAsync();
+            return _mapper.Map<List<KvarDto>>(k);
         }
 
         public async Task<MapDataDto> GetMapDataDto()

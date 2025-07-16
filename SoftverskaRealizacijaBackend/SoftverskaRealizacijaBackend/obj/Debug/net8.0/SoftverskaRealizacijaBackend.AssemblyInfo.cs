@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SoftverskaRealizacijaBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+de1a82d31abe65141c8228f9ec4ac9d44ca7dbe2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eaaeb4a5063825162c58470ee015940f14156ff6")]
 [assembly: System.Reflection.AssemblyProductAttribute("SoftverskaRealizacijaBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SoftverskaRealizacijaBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
