@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection } from "../Services/MapService";
+import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection, addKvar, getKvarList } from "../Services/MapService";
 import { useNavigate } from "react-router-dom";
 
 
@@ -13,7 +13,9 @@ const Home = () => {
     const [nodes,setNodes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [lines, setLines] = useState([]);
+    const [errors, setErrors] = useState([]);
     const [addingMode, setAddingMode] = useState(false);
+    const [addingLineMode, setAddingLineMode] = useState(false);
     const [selectedPins, setSelectedPins] = useState([]);
       
     const customIcon = new Icon({
@@ -39,10 +41,15 @@ const Home = () => {
               
     };
 
+    
+
     const reportProblem = async (pinId) => {
         try {
           //logika o dodavanju kvara
-          const kvarJSON=JSON.stringify({vremmePrijave: Date.now() , vremeOtklanjanja:null , client:1, node:1, stanjeKvara:"aktivan" })
+          const kvarJSON=JSON.stringify({vremmePrijave: new Date().toISOString() , vremeOtklanjanja:null , client:1, node:pinId, stanjeKvara:"aktivan" })
+          const newError = addKvar(kvarJSON);
+          console.log("New error:",newError);
+          //setErrors([...errors, newError]);
           alert(`Reported problem for pin ID: ${pinId}`);
         } catch (error) {
           console.error('Failed to report problem:', error);
@@ -76,16 +83,31 @@ const Home = () => {
             }
     }
 
+    const getErrors = async () => {
+            setLoading(true);
+            setErrors([]);
+            const data = await getKvarList();
+            
+            if(data !== null){
+                setErrors(data);
+                
+                setLoading(false);
+                console.log("Errors:",errors);
+            }
+    }
+
     
 
 
     
     const handlePinSelect = (pin) => {
-        if (selectedPins.length === 0) {
-          setSelectedPins([pin]);
-        } else if (selectedPins.length === 1) {
-          addLine(selectedPins[0], pin);
-          setSelectedPins([]);
+        if(addingLineMode){
+          if (selectedPins.length === 0) {
+            setSelectedPins([pin]);
+          } else if (selectedPins.length === 1) {
+            addLine(selectedPins[0], pin);
+            setSelectedPins([]);
+          }
         }
       };
         
@@ -136,6 +158,23 @@ const Home = () => {
                   </td>
                   
                 </tr>
+              
+              ))}
+              {errors.map((e)=>(
+                <tr>
+                  <td>Error</td>
+                  <td>
+                    {e.id}
+                  </td>
+                  <td>
+                    {e.node}
+                  </td>
+                  <td>
+                    {e.stanjeKvara}
+                  </td>
+                  
+                </tr>
+              
               ))}
             </table>
             <div className="buttons-flex">
@@ -148,8 +187,14 @@ const Home = () => {
                             <button className="ui blue button" onClick={() => getLines()}>
                                 Get Lines
                             </button>
+                            <button className="ui blue button" onClick={() => getErrors()}>
+                                Get Errors
+                            </button>
                             <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
                               {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
+                            </button>
+                            <button className="ui blue button" onClick={() => setAddingLineMode(!addingLineMode)}>
+                              {addingMode ? 'Disable Adding Lines' : 'Enable Adding Lines'}
                             </button>
                             
                             
