@@ -41,7 +41,8 @@ const Home = () => {
 
     const reportProblem = async (pinId) => {
         try {
-          await fetch(`/api/map-data/report-problem/${pinId}`, { method: 'POST' });
+          //logika o dodavanju kvara
+          const kvarJSON=JSON.stringify({vremmePrijave: Date.now() , vremeOtklanjanja:null , client:1, node:1, stanjeKvara:"aktivan" })
           alert(`Reported problem for pin ID: ${pinId}`);
         } catch (error) {
           console.error('Failed to report problem:', error);

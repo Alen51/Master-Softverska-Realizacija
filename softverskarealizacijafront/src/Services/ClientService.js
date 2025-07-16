@@ -25,7 +25,7 @@ export const LoginUser = async (loginJSON) => {
     return null;
   }
 };
-//'Access-Control-Allow-Origin': '*',
+
 export const RegisterUser = async (clientJSON) => {
     const REGISTRATION_URL = "/users/registration";
     var msg1;
@@ -46,7 +46,7 @@ export const RegisterUser = async (clientJSON) => {
         
         return null;
     }
-}
+};
 
 export const EditProfile = async (updatedKorisnikJSON, id, token) => {
   const UPDATE_URL = "/users/" + id ; //treba da dobije id isto
@@ -69,7 +69,7 @@ export const EditProfile = async (updatedKorisnikJSON, id, token) => {
       console.log(err);
       alert("Error while profile data edit")
   }
-}
+};
 
 export const GetAllUsers = async () => {
   const GET_USERS_URL = '/users/getAll'
@@ -92,4 +92,4 @@ export const GetAllUsers = async () => {
       alert("Nesto se desilo prilikom dobavljanja prodavaca");
       return null;
   }
-}
+};
