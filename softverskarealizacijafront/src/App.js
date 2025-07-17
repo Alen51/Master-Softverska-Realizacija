@@ -7,7 +7,10 @@ import Login from './Components/LoginAndRegisterComponents/Login';
 import Registration from './Components/LoginAndRegisterComponents/Registration';
 import AdminDashboard from './Components/AdministratorComponents/AdminDashboard';
 import AdminMap from './Components/AdministratorComponents/AdminMap';
+import AdminErrors from './Components/AdministratorComponents/AdminErrors';
 import Profil from './Components/ProfileComponents/Profile';
+import ClientMap from './Components/ClientComponent/ClientMap';
+import ClientErrors from './Components/ClientComponent/ClientErrors';
 import { Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
@@ -53,6 +56,9 @@ function App() {
     {path: '/registration', element: <Registration handleKorisnikInfo={handleKorisnikInfo}></Registration>},
     {path: '/adminDashboard', element: <AdminDashboard></AdminDashboard>},
     {path: '/adminMap', element: <AdminMap></AdminMap>},
+    {path: '/adminErrors', element:<AdminErrors></AdminErrors>},
+    {path: '/clientMap', element:<ClientMap></ClientMap>},
+    {path: '/clientErrors', element:<ClientErrors></ClientErrors>},
     {path: '/profil', element: <Profil></Profil>}
     
   ]
