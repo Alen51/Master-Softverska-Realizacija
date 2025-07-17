@@ -25,8 +25,10 @@ const NavBar = ({isAuth, tipKorisnika,  handleLogout}) => {
         {isAuth && tipKorisnika === 'Administrator' ? <NavLink className={({isActive}) => active(isActive)} to="/adminMap">Admin Map</NavLink> : null}
         {isAuth && tipKorisnika === 'Administrator' ? <NavLink className={({isActive}) => active(isActive)} to="/adminErrors">Admin Errors</NavLink> : null}
         
-        {isAuth && tipKorisnika === 'Client' ? <NavLink className={({isActive}) => active(isActive)} to="/clientMap">Client map </NavLink> : null}
-        {isAuth && tipKorisnika === 'Client' ? <NavLink className={({isActive}) => active(isActive)} to="/clientErrors">Client Errors</NavLink> : null}
+        {isAuth && tipKorisnika === 'Kupac' ? <NavLink className={({isActive}) => active(isActive)} to="/clientMap">Client Map </NavLink> : null}
+        {isAuth && tipKorisnika === 'Kupac' ? <NavLink className={({isActive}) => active(isActive)} to="/clientErrors">Client Errors</NavLink> : null}
+        
+        {isAuth && tipKorisnika === 'Gost' ? <NavLink className={({isActive}) => active(isActive)} to="/gostMap">gost Map</NavLink> : null}
         
 
         {isAuth  ? <NavLink className={({isActive}) => active(isActive)} to="/profil">Profil</NavLink> : null}

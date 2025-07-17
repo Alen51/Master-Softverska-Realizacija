@@ -11,6 +11,7 @@ import AdminErrors from './Components/AdministratorComponents/AdminErrors';
 import Profil from './Components/ProfileComponents/Profile';
 import ClientMap from './Components/ClientComponent/ClientMap';
 import ClientErrors from './Components/ClientComponent/ClientErrors';
+import GostMap from './Components/GostComponents/GostMap';
 import { Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
@@ -59,6 +60,7 @@ function App() {
     {path: '/adminErrors', element:<AdminErrors></AdminErrors>},
     {path: '/clientMap', element:<ClientMap></ClientMap>},
     {path: '/clientErrors', element:<ClientErrors></ClientErrors>},
+    {path: '/gostMap', element:<GostMap></GostMap>},
     {path: '/profil', element: <Profil></Profil>}
     
   ]
