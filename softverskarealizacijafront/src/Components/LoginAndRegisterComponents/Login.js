@@ -33,7 +33,7 @@ const Login = ({handleKorisnikInfo}) => {
             navigate('/adminDashboard');
         }
         else if(tipKorisnika === 'Kupac'){
-            navigate('/kupacDashboard');
+            navigate('/clientMap');
         }
         else if(tipKorisnika === 'Gost'){
             navigate('/gostDashboard');

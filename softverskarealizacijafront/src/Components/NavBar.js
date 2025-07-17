@@ -23,6 +23,10 @@ const NavBar = ({isAuth, tipKorisnika,  handleLogout}) => {
         {/*logovani korisnik koji je admin, dodati proveru za role*/}
         {isAuth && tipKorisnika === 'Administrator' ? <NavLink className={({isActive}) => active(isActive)} to="/adminDashboard">Admin dashboard</NavLink> : null}
         {isAuth && tipKorisnika === 'Administrator' ? <NavLink className={({isActive}) => active(isActive)} to="/adminMap">Admin Map</NavLink> : null}
+        {isAuth && tipKorisnika === 'Administrator' ? <NavLink className={({isActive}) => active(isActive)} to="/adminErrors">Admin Errors</NavLink> : null}
+        
+        {isAuth && tipKorisnika === 'Client' ? <NavLink className={({isActive}) => active(isActive)} to="/clientMap">Client map </NavLink> : null}
+        {isAuth && tipKorisnika === 'Client' ? <NavLink className={({isActive}) => active(isActive)} to="/clientErrors">Client Errors</NavLink> : null}
         
 
         {isAuth  ? <NavLink className={({isActive}) => active(isActive)} to="/profil">Profil</NavLink> : null}
