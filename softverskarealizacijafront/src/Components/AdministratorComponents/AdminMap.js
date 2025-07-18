@@ -14,6 +14,7 @@ const AdminMap = () =>{
           const [addingMode, setAddingMode] = useState(false);
           const [addingLineMode, setAddingLineMode] = useState(false);
           const [selectedPins, setSelectedPins] = useState([]);
+          const [korisnikId, setKorisnikId]= useState([]);
       //koriste se za prikaz poruke i njen kontent
       
       //const token = sessionStorage.getItem('token')
@@ -25,7 +26,17 @@ const AdminMap = () =>{
         iconSize: [38, 38] // size of the icon
       });
     
-      
+      useEffect(() => {
+    const getAuth = () => {
+        if(sessionStorage.getItem('korisnik') !== null){
+            
+            const korisnik = JSON.parse(sessionStorage.getItem('korisnik'))
+            setKorisnikId(korisnik.id);
+           
+        }
+    }
+    getAuth();
+  });
         
        const addPin = async (latlng) => {
                   
