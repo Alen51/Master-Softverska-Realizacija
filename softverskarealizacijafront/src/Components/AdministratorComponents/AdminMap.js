@@ -2,20 +2,18 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo, addNode, addNodeConnection, getNodes, getNodeConnections, GetNodes, GetNodeConnections } from "../../Services/MapService";
+import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection, addKvar, getKvarList } from "../Services/MapService";
 import { useNavigate } from "react-router-dom";
-import NodeDto from "../../Models/NodeDto";
-import axios from "../../api/axios";
 
 const AdminMap = () =>{
 
-      const [nodes, setNodes] = useState([]);
-      const[test,setTest] = useState([]);
-      const [lines, setLines] = useState([]);
-      const [addingMode, setAddingMode] = useState(false);
-      const [selectedPins, setSelectedPins] = useState([]);
-      const [loading, setLoading] = useState(false); // Track loading
-
+      const [nodes,setNodes] = useState([]);
+          const [loading, setLoading] = useState(true);
+          const [lines, setLines] = useState([]);
+          const [errors, setErrors] = useState([]);
+          const [addingMode, setAddingMode] = useState(false);
+          const [addingLineMode, setAddingLineMode] = useState(false);
+          const [selectedPins, setSelectedPins] = useState([]);
       //koriste se za prikaz poruke i njen kontent
       
       //const token = sessionStorage.getItem('token')
@@ -29,48 +27,27 @@ const AdminMap = () =>{
     
       
         
-          const getMapData = async()=> {
-            setLoading(true);
-            const n = await GetNodes();
-            const l = await GetNodeConnections();
-            
-            const cleanN = n.map((node)=>({
-              id: node.id,
-              latitude: node.latitude,
-              longitude: node.longitude,
-            }))
-
-            if(n!==null && l!==null){
-              setNodes(cleanN);
-              setLines([...lines,l]);
-              
-              console.log("P",n);
-              console.log("L",l);
-              console.log("pins:",nodes);
-              console.log("lines",lines);
-              
-              setLoading(false);
-            }
+       const addPin = async (latlng) => {
+                  
+                  const nodeJSON=JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng });
+                  console.log(nodeJSON);
+                  const newPin = addNode(nodeJSON);
+                  console.log("New node:" , newPin);
+                  //setNodes([...nodes, newPin]);
+                  
           }
-          getMapData();         
+              
+          const addLine = async (startPin, endPin) => {
+                  const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
+                  //setLines([...lines,newLine]);
+                  console.log("New line:", newLine);
+                    
+          };  
       
     
               
     
-      const addPin = async (latlng) => {
-        
-        const nodeJSON=JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng });
-        console.log(nodeJSON);
-        const newPin = addNode(nodeJSON);
-        console.log("New node:" + newPin);
-        //setPins([...pins, newPin]);
-      }
-    
-      const addLine = async (startPin, endPin) => {
-        const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
-        //setLines([...lines,newLine]);
-          
-      };
+      
       
     
       const handlePinSelect = (pin) => {
@@ -83,13 +60,57 @@ const AdminMap = () =>{
       };
     
       const reportProblem = async (pinId) => {
-        try {
-          await fetch(`/api/map-data/report-problem/${pinId}`, { method: 'POST' });
-          alert(`Reported problem for pin ID: ${pinId}`);
-        } catch (error) {
-          console.error('Failed to report problem:', error);
-        }
-      };
+              try {
+                //logika o dodavanju kvara
+                const kvarJSON=JSON.stringify({vremmePrijave: new Date().toISOString() , vremeOtklanjanja:null , client:1, node:pinId, stanjeKvara:"aktivan" })
+                const newError = addKvar(kvarJSON);
+                console.log("New error:",newError);
+                //setErrors([...errors, newError]);
+                alert(`Reported problem for pin ID: ${pinId}`);
+              } catch (error) {
+                console.error('Failed to report problem:', error);
+              }
+          };
+
+          const getNodes = async () => {
+                      setNodes([]);
+                      setLoading(true);
+          
+                      const data = await GetNodes();
+                      
+                      if(data !== null){
+                          setNodes(data);
+                          
+                          setLoading(false);
+                          console.log("Nodes:",nodes);
+                      }
+              }
+          
+              const getLines = async () => {
+                      setLoading(true);
+                      setLines([]);
+                      const data = await GetNodeConnections();
+                      
+                      if(data !== null){
+                          setLines(data);
+                          
+                          setLoading(false);
+                          console.log("Lines:",lines);
+                      }
+              }
+          
+              const getErrors = async () => {
+                      setLoading(true);
+                      setErrors([]);
+                      const data = await getKvarList();
+                      
+                      if(data !== null){
+                          setErrors(data);
+                          
+                          setLoading(false);
+                          console.log("Errors:",errors);
+                      }
+              }
     
     
         return(
@@ -122,11 +143,23 @@ const AdminMap = () =>{
                
                 <div className="buttons-flex">
                 <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
-                    {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
-                </button>
-                <button className="ui blue button" onClick={() => getMapData()}>
-                    Load map data
-                </button>
+                                {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
+                            </button>
+                            <button className="ui blue button" onClick={() => getNodes()}>
+                                Get Nodes
+                            </button>
+                            <button className="ui blue button" onClick={() => getLines()}>
+                                Get Lines
+                            </button>
+                            <button className="ui blue button" onClick={() => getErrors()}>
+                                Get Errors
+                            </button>
+                            <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
+                              {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
+                            </button>
+                            <button className="ui blue button" onClick={() => setAddingLineMode(!addingLineMode)}>
+                              {addingMode ? 'Disable Adding Lines' : 'Enable Adding Lines'}
+                            </button>
                 
                 </div>
                 <div></div>
@@ -140,18 +173,17 @@ const AdminMap = () =>{
                     />
                     <MapClickHandler addingMode={addingMode} addPin={addPin} />
                     {nodes.map((node) => (
-                      <Marker key={node.id} position={[node.latitude, node.longitude]} icon={customIcon}>
+                      <Marker key={node.id} position={[node.latitude, node.longitude]} icon={customIcon}
                         
                         
                         eventHandlers={{
                           click: () => handlePinSelect(node), // Select pin on click
                         }}
-                
+                      >
                         <Popup>
                           <div>
                             <p><strong>Pin ID:</strong> {node.id}</p>
-                            <button onClick={() => reportProblem(node.id)}>Report Problem</button>
-                          </div>
+                              </div>
                         </Popup>
                       </Marker>
                     ))}
