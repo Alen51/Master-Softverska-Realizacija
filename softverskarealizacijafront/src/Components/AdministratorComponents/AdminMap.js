@@ -27,33 +27,34 @@ const AdminMap = () =>{
       });
     
       useEffect(() => {
-    const getAuth = () => {
-        if(sessionStorage.getItem('korisnik') !== null){
-            
-            const korisnik = JSON.parse(sessionStorage.getItem('korisnik'))
-            setKorisnikId(korisnik.id);
-           
-        }
-    }
-    getAuth();
-  });
-        
-       const addPin = async (latlng) => {
-                  
-                  const nodeJSON=JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng });
-                  console.log(nodeJSON);
-                  const newPin = addNode(nodeJSON);
-                  console.log("New node:" , newPin);
-                  //setNodes([...nodes, newPin]);
-                  
-          }
+        const getAuth = () => {
+            if(sessionStorage.getItem('korisnik') !== null){
+                
+                const korisnik = JSON.parse(sessionStorage.getItem('korisnik'))
+                setKorisnikId(korisnik.id);
               
-          const addLine = async (startPin, endPin) => {
-                  const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
-                  //setLines([...lines,newLine]);
-                  console.log("New line:", newLine);
-                    
-          };  
+            }
+        }
+        getAuth();
+      });
+        
+      const addPin = async (latlng) => {
+                
+        const nodeJSON=JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng });
+        console.log(nodeJSON);
+        const newPin = addNode(nodeJSON);
+        console.log("New node:" , newPin);
+        //setNodes([...nodes, newPin]);
+        
+      }
+              
+      const addLine = async (startPin, endPin) => {
+
+        const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
+        //setLines([...lines,newLine]);
+        console.log("New line:", newLine);
+          
+      };  
       
     
               
@@ -71,57 +72,60 @@ const AdminMap = () =>{
       };
     
       const reportProblem = async (pinId) => {
-              try {
-                //logika o dodavanju kvara
-                const kvarJSON=JSON.stringify({vremmePrijave: new Date().toISOString() , vremeOtklanjanja:null , client:1, node:pinId, stanjeKvara:"aktivan" })
-                const newError = addKvar(kvarJSON);
-                console.log("New error:",newError);
-                //setErrors([...errors, newError]);
-                alert(`Reported problem for pin ID: ${pinId}`);
-              } catch (error) {
-                console.error('Failed to report problem:', error);
-              }
-          };
+            try {
+              //logika o dodavanju kvara
+              const kvarJSON=JSON.stringify({vremmePrijave: new Date().toISOString() , vremeOtklanjanja:null , client:1, node:pinId, stanjeKvara:"aktivan" })
+              const newError = addKvar(kvarJSON);
+              console.log("New error:",newError);
+              //setErrors([...errors, newError]);
+              alert(`Reported problem for pin ID: ${pinId}`);
+            } catch (error) {
+              console.error('Failed to report problem:', error);
+            }
+        };
 
-          const getNodes = async () => {
-                      setNodes([]);
-                      setLoading(true);
+      const getNodes = async () => {
+        
+        setNodes([]);
+        setLoading(true);
+
+        const data = await GetNodes();
+        
+        if(data !== null){
+            setNodes(data);
+            
+            setLoading(false);
+            console.log("Nodes:",nodes);
+        }
+      }
+      
+      const getLines = async () => {
+
+          setLoading(true);
+          setLines([]);
+          const data = await GetNodeConnections();
           
-                      const data = await GetNodes();
-                      
-                      if(data !== null){
-                          setNodes(data);
-                          
-                          setLoading(false);
-                          console.log("Nodes:",nodes);
-                      }
-              }
+          if(data !== null){
+              setLines(data);
+              
+              setLoading(false);
+              console.log("Lines:",lines);
+          }
+      }
           
-              const getLines = async () => {
-                      setLoading(true);
-                      setLines([]);
-                      const data = await GetNodeConnections();
-                      
-                      if(data !== null){
-                          setLines(data);
-                          
-                          setLoading(false);
-                          console.log("Lines:",lines);
-                      }
-              }
+      const getErrors = async () => {
+        
+          setLoading(true);
+          setErrors([]);
+          const data = await getKvarList();
           
-              const getErrors = async () => {
-                      setLoading(true);
-                      setErrors([]);
-                      const data = await getKvarList();
-                      
-                      if(data !== null){
-                          setErrors(data);
-                          
-                          setLoading(false);
-                          console.log("Errors:",errors);
-                      }
-              }
+          if(data !== null){
+              setErrors(data);
+              
+              setLoading(false);
+              console.log("Errors:",errors);
+          }
+      }
     
     
         return(
