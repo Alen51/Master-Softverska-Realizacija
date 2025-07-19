@@ -8,20 +8,21 @@ const ClientErrors = () =>{
     const [errors, setErrors] = useState([]);
 
     const getErrors = async () => {
-                setLoading(true);
-                setErrors([]);
-                const data = await getKvarList();
-                
-                if(data !== null){
-                    setErrors(data);
-                    
-                    setLoading(false);
-                    console.log("Errors:",errors);
-                }
+
+        setLoading(true);
+        setErrors([]);
+        const data = await getKvarList();
+        
+        if(data !== null){
+            setErrors(data);
+            
+            setLoading(false);
+            console.log("Errors:",errors);
         }
-
-
     }
+
+
+
 
     return (
         <div>
@@ -61,5 +62,7 @@ const ClientErrors = () =>{
         </div>
         
     )
+
+}
 
 export default ClientErrors;

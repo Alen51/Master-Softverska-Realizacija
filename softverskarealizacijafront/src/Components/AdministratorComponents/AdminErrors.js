@@ -8,20 +8,21 @@ const AdminErrors = () =>{
     const [errors, setErrors] = useState([]);
 
     const getErrors = async () => {
-                setLoading(true);
-                setErrors([]);
-                const data = await getKvarList();
-                
-                if(data !== null){
-                    setErrors(data);
-                    
-                    setLoading(false);
-                    console.log("Errors:",errors);
-                }
+
+        setLoading(true);
+        setErrors([]);
+        const data = await getKvarList();
+        
+        if(data !== null){
+            setErrors(data);
+            
+            setLoading(false);
+            console.log("Errors:",errors);
         }
-
-
     }
+
+
+    
 
     return (
         <div>
@@ -67,5 +68,7 @@ const AdminErrors = () =>{
         </div>
         
     )
+
+}
 
 export default AdminErrors;

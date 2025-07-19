@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo,  GetNodeConnections, GetNodes , getKvarList } from "../Services/MapService";
+import { GetNodeConnections, GetNodes , getKvarList } from "../Services/MapService";
 import { useNavigate } from "react-router-dom";
 
 
@@ -16,10 +16,10 @@ const ClientMap = () =>{
     const [korisnikId, setKorisnikId]= useState([]);
 
     const customIcon = new Icon({
-                // iconUrl: "https://cdn-icons-png.flaticon.com/512/447/447031.png",
-                iconUrl: require("../Icons/placeholder.png"),
-                iconSize: [38, 38] // size of the icon
-              });
+        // iconUrl: "https://cdn-icons-png.flaticon.com/512/447/447031.png",
+        iconUrl: require("../Icons/placeholder.png"),
+        iconSize: [38, 38] // size of the icon
+    });
 
     
     useEffect(() => {
@@ -36,57 +36,57 @@ const ClientMap = () =>{
 
 
     const reportProblem = async (pinId) => {
-            try {
+        try {
             //logika o dodavanju kvara
             const kvarJSON=JSON.stringify({vremmePrijave: new Date().toISOString() , vremeOtklanjanja:null , client:1, node:pinId, stanjeKvara:"aktivan" })
             const newError = addKvar(kvarJSON);
             console.log("New error:",newError);
             //setErrors([...errors, newError]);
             alert(`Reported problem for pin ID: ${pinId}`);
-            } catch (error) {
+        } catch (error) {
             console.error('Failed to report problem:', error);
-            }
-        };
-    
-        const getNodes = async () => {
-                setNodes([]);
-                setLoading(true);
-    
-                const data = await GetNodes();
-                
-                if(data !== null){
-                    setNodes(data);
-                    
-                    setLoading(false);
-                    console.log("Nodes:",nodes);
-                }
         }
-    
-        const getLines = async () => {
-                setLoading(true);
-                setLines([]);
-                const data = await GetNodeConnections();
-                
-                if(data !== null){
-                    setLines(data);
-                    
-                    setLoading(false);
-                    console.log("Lines:",lines);
-                }
+    };
+
+    const getNodes = async () => {
+        setNodes([]);
+        setLoading(true);
+
+        const data = await GetNodes();
+        
+        if(data !== null){
+            setNodes(data);
+            
+            setLoading(false);
+            console.log("Nodes:",nodes);
         }
-    
-        const getErrors = async () => {
-                setLoading(true);
-                setErrors([]);
-                const data = await getKvarList();
-                
-                if(data !== null){
-                    setErrors(data);
-                    
-                    setLoading(false);
-                    console.log("Errors:",errors);
-                }
+    }
+
+    const getLines = async () => {
+        setLoading(true);
+        setLines([]);
+        const data = await GetNodeConnections();
+        
+        if(data !== null){
+            setLines(data);
+            
+            setLoading(false);
+            console.log("Lines:",lines);
         }
+    }
+
+    const getErrors = async () => {
+        setLoading(true);
+        setErrors([]);
+        const data = await getKvarList();
+        
+        if(data !== null){
+            setErrors(data);
+            
+            setLoading(false);
+            console.log("Errors:",errors);
+        }
+    }
 
     const handlePrikazDugmadi = (node) => {
         if(errors.find(e=>e.node === node.id && e.client=== korisnikId && e.stanjeKvara == "Aktivan") ){
@@ -97,6 +97,12 @@ const ClientMap = () =>{
                         
         }
     }
+
+    const getMpaData = () =>{
+        getNodes();
+        getLines();
+        getErrors();
+    }
       
    return(
     <div>
@@ -105,15 +111,10 @@ const ClientMap = () =>{
             <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
             {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
             </button>
-            <button className="ui blue button" onClick={() => getNodes()}>
-            Get Nodes
+            <button className="ui blue button" onClick={() => getMpaData()}>
+            Map data
             </button>
-            <button className="ui blue button" onClick={() => getLines()}>
-            Get Lines
-            </button>
-            <button className="ui blue button" onClick={() => getErrors()}>
-            Get Errors
-            </button>
+            
 
 
 
