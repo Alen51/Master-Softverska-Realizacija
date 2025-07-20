@@ -48,7 +48,7 @@ const AdminErrors = () =>{
                                 Get Errors
             </button>
 
-            <table>
+            <table className="ui fixed blue celled table">
             <tr>
                 <td>
                     Repported by Client 

@@ -125,7 +125,7 @@ const Home = () => {
             Dobrodosli na stranicu
 
             </h1>
-            <table>
+            <table className="ui fixed blue celled table">
               <tr>
                 <td>
                   Id
