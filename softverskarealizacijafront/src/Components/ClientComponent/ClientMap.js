@@ -16,9 +16,11 @@ const ClientMap = () =>{
     const [korisnikId, setKorisnikId]= useState([]);
 
     const customIcon = new Icon({
+        
         // iconUrl: "https://cdn-icons-png.flaticon.com/512/447/447031.png",
         iconUrl: require("../Icons/placeholder.png"),
         iconSize: [38, 38] // size of the icon
+
     });
 
     
@@ -36,19 +38,24 @@ const ClientMap = () =>{
 
 
     const reportProblem = async (pinId) => {
+
         try {
+
             //logika o dodavanju kvara
-            const kvarJSON=JSON.stringify({vremmePrijave: new Date().toISOString() , vremeOtklanjanja:null , client:1, node:pinId, stanjeKvara:"aktivan" })
+            const kvarJSON=JSON.stringify({vremmePrijave: new Date().toISOString() , vremeOtklanjanja:null , client:korisnikId, node:pinId, stanjeKvara:"Aktivan" })
             const newError = addKvar(kvarJSON);
             console.log("New error:",newError);
             //setErrors([...errors, newError]);
             alert(`Reported problem for pin ID: ${pinId}`);
+
         } catch (error) {
             console.error('Failed to report problem:', error);
         }
+
     };
 
     const getNodes = async () => {
+
         setNodes([]);
         setLoading(true);
 
@@ -60,9 +67,11 @@ const ClientMap = () =>{
             setLoading(false);
             console.log("Nodes:",nodes);
         }
+
     }
 
     const getLines = async () => {
+
         setLoading(true);
         setLines([]);
         const data = await GetNodeConnections();
@@ -73,9 +82,11 @@ const ClientMap = () =>{
             setLoading(false);
             console.log("Lines:",lines);
         }
+
     }
 
     const getErrors = async () => {
+        
         setLoading(true);
         setErrors([]);
         const data = await getKvarList();
@@ -86,9 +97,11 @@ const ClientMap = () =>{
             setLoading(false);
             console.log("Errors:",errors);
         }
+
     }
 
     const handlePrikazDugmadi = (node) => {
+
         if(errors.find(e=>e.node === node.id && e.client=== korisnikId && e.stanjeKvara == "Aktivan") ){
             return  null;
         }
@@ -99,9 +112,11 @@ const ClientMap = () =>{
     }
 
     const getMpaData = () =>{
+
         getNodes();
         getLines();
         getErrors();
+
     }
       
    return(
