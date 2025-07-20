@@ -21,7 +21,20 @@ const AdminErrors = () =>{
         }
     }
 
+    const fixProblem = (errorId) =>{
+        
+    }
 
+    const handlePrikazDugmadi = (error) => {
+
+        if(error.stanjeKvara == "Aktivan" ){
+            return  <button className="ui red button" onClick={() => fixProblem(error.id)}>Fix Problem</button>
+                       
+        }
+        else {
+            return    null; 
+        }
+    }
     
 
     return (
@@ -58,6 +71,9 @@ const AdminErrors = () =>{
                     </td>
                     <td>
                         {error.stanjeKvara}
+                    </td>
+                    <td>
+                        {handlePrikazDugmadi(error)}
                     </td>
                 </tr>
             ))}
