@@ -41,7 +41,7 @@ const AdminErrors = () =>{
         <div>
             <h1 color="red" className="ui blue center aligned header">
 
-            Lista prijavljenih kvarova
+            Reported errors list
 
             </h1>
             <button className="ui blue button" onClick={() => getErrors()}>
@@ -54,7 +54,7 @@ const AdminErrors = () =>{
                     Repported by Client 
                 </td>
                 <td>
-                    Vreme prijave
+                    Error reporting time
                 </td>
                 <td>
                     Status
