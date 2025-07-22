@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SoftverskaRealizacijaBackend.Helpers;
 using SoftverskaRealizacijaBackend.Models;
 
 namespace SoftverskaRealizacijaBackend.Infrastructure
@@ -41,6 +42,58 @@ namespace SoftverskaRealizacijaBackend.Infrastructure
                     StartPinId = 1,
                     EndPinId = 2,
                 }
+            );
+
+            modelBuilder.Entity<Client>().HasData(
+                new Client
+                {
+                    Id=1,
+                    Email="admin1@gmail.com",
+                    fullName="Admin1",
+                    TipKorisnika = Enumerations.TipKorisnika.Administrator,
+                    Password = ClientHelper.HashPassword("111"),
+
+                }
+                
+            );
+
+            modelBuilder.Entity<Client>().HasData(
+                new Client
+                {
+                    Id = 2,
+                    Email = "gost1@gmail.com",
+                    fullName = "Gost1",
+                    TipKorisnika = Enumerations.TipKorisnika.Gost,
+                    Password = ClientHelper.HashPassword("111"),
+
+                }
+
+            );
+
+            modelBuilder.Entity<Client>().HasData(
+                new Client
+                {
+                    Id = 3,
+                    Email = "kupac1@gmail.com",
+                    fullName = "Kupac1",
+                    TipKorisnika = Enumerations.TipKorisnika.Kupac,
+                    Password = ClientHelper.HashPassword("111"),
+
+                }
+
+            );
+
+            modelBuilder.Entity<Client>().HasData(
+                new Client
+                {
+                    Id = 4,
+                    Email = "kupac2@gmail.com",
+                    fullName = "Kupac2",
+                    TipKorisnika = Enumerations.TipKorisnika.Kupac,
+                    Password = ClientHelper.HashPassword("111"),
+
+                }
+
             );
         }
     }
