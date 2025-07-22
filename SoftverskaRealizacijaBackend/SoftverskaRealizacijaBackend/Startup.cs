@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SoftverskaRealizacijaBackend.Infrastructure;
@@ -93,7 +94,8 @@ namespace SoftverskaRealizacijaBackend
             services.AddScoped<IMapService, MapService>();
 
             //registracija db contexta u kontejneru zavisnosti, njegov zivotni vek je Scoped
-            services.AddDbContext<CRUDContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CRUD_Context")));
+            services.AddDbContext<CRUDContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CRUD_Context")).ConfigureWarnings(warnings =>
+        warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
             //Registracija mapera u kontejneru, zivotni vek singleton
 
             services.AddControllers().AddJsonOptions(x =>
