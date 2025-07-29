@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { GetNodeConnections, GetNodes , getKvarList } from "../Services/MapService";
+import { GetNodeConnections, GetNodes , getKvarList, addKvar } from "../../Services/MapService";
 import { useNavigate } from "react-router-dom";
 
 
@@ -18,7 +18,7 @@ const ClientMap = () =>{
     const customIcon = new Icon({
         
         // iconUrl: "https://cdn-icons-png.flaticon.com/512/447/447031.png",
-        iconUrl: require("../Icons/placeholder.png"),
+        iconUrl: require("../../Icons/placeholder.png"),
         iconSize: [38, 38] // size of the icon
 
     });
@@ -123,9 +123,7 @@ const ClientMap = () =>{
     <div>
         <h1>Client Map</h1>
         <div className="buttons-flex">
-            <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
-            {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
-            </button>
+            
             <button className="ui blue button" onClick={() => getMpaData()}>
             Map data
             </button>
@@ -141,7 +139,6 @@ const ClientMap = () =>{
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <MapClickHandler addingMode={addingMode} addPin={addPin} />
                 
                 {nodes.map((node)=>(
                     <Marker key={node.id} position={[node.latitude, node.longitude]} icon={customIcon} 

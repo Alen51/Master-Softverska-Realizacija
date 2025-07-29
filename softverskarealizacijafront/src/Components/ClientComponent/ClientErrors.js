@@ -9,14 +9,14 @@ const ClientErrors = () =>{
 
     const getErrors = async () => {
 
-        setLoading(true);
+        
         setErrors([]);
         const data = await getKvarList();
         
         if(data !== null){
             setErrors(data);
             
-            setLoading(false);
+            
             console.log("Errors:",errors);
         }
     }
