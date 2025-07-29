@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import {  GetNodeConnections, GetNodes,  getKvarList } from "../Services/MapService";
+import {  GetNodeConnections, GetNodes,  getKvarList } from "../../Services/MapService";
 
 const GostMap = () =>{
 
@@ -13,7 +13,7 @@ const GostMap = () =>{
 
     const customIcon = new Icon({
                 // iconUrl: "https://cdn-icons-png.flaticon.com/512/447/447031.png",
-        iconUrl: require("../Icons/placeholder.png"),
+        iconUrl: require("../../Icons/placeholder.png"),
         iconSize: [38, 38] // size of the icon
     });
 

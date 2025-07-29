@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection, addKvar, getKvarList } from "../Services/MapService";
+import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection, addKvar, getKvarList } from "../../Services/MapService";
 import { useNavigate } from "react-router-dom";
 
 const AdminMap = () =>{
