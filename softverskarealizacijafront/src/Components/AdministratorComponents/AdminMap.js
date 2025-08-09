@@ -50,7 +50,7 @@ const AdminMap = () =>{
               
       const addLine = async (startPin, endPin) => {
 
-        const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id }))
+        const newLine = addNodeConnection(JSON.stringify({ startPinId: startPin.id, endPinId: endPin.id , hasError:false }))
         //setLines([...lines,newLine]);
         console.log("New line:", newLine);
           

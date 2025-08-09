@@ -95,6 +95,18 @@ namespace SoftverskaRealizacijaBackend.Infrastructure
                 }
 
             );
+
+            modelBuilder.Entity<NodeConnection>().HasData(
+                new NodeConnection
+                {
+                    Id = 5,
+                    StartPinId=1, 
+                    EndPinId=2,
+                    HasError=false
+
+                }
+
+            );
         }
     }
 
