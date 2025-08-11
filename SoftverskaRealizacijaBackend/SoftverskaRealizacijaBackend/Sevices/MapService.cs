@@ -4,6 +4,8 @@ using SoftverskaRealizacijaBackend.Dto;
 using SoftverskaRealizacijaBackend.Infrastructure;
 using SoftverskaRealizacijaBackend.Interfaces;
 using SoftverskaRealizacijaBackend.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SoftverskaRealizacijaBackend.Sevices
 {
@@ -90,5 +92,81 @@ namespace SoftverskaRealizacijaBackend.Sevices
             return map;
 
         }
+
+        public async Task FindErrorOrigin(NodeHelper nodeHelper)
+        {
+            List<Node> nodes = await _dbContext.Nodes.ToListAsync();
+            List<Kvar> errors = await _dbContext.Kvarovi.ToListAsync();
+            List<NodeConnection> connections = await _dbContext.NodeConnections.ToListAsync();
+
+            var (allNodes, lineMap) = BuildTree(nodes, connections, errors);
+
+            var rootNodes = allNodes.Where(n => n.ParentLine == null);
+
+            foreach (var root in rootNodes)
+            {
+                PropagateErrors(root,allNodes);
+            }
+
+
+
+
+            return;
+        }
+
+        public (List<NodeHelper>, Dictionary<int, LineHelper> lineMap) BuildTree(
+                                    List<Node> nodes,
+                                    List<NodeConnection> connections,
+                                    List<Kvar> errors)
+        {
+            var nodeMap = nodes.ToDictionary(n => n.Id, n => new NodeHelper
+            {
+                Node = n,
+                HasError = errors.Any(e => e.Node == n.Id && e.StanjeKvara==Enumerations.StanjeKvara.Aktivan)
+            });
+
+            var lineMap = new Dictionary<int, LineHelper>();
+
+            foreach (var conn in connections)
+            {
+                var lineHelper = new LineHelper { Connection = conn };
+                lineMap[conn.Id] = lineHelper;
+
+                var parentNode = nodeMap[conn.StartPinId];
+                var childNode = nodeMap[conn.EndPinId];
+
+                parentNode.OutgoingLines.Add(lineHelper);
+                childNode.ParentLine = lineHelper;
+            }
+
+            return (nodeMap.Values.ToList(),lineMap);
+        }
+
+        void PropagateErrors(NodeHelper node, List<NodeHelper> allNodes) 
+        {
+            if (node.HasError && node.ParentLine != null)
+            {
+                node.ParentLine.HasError = true;
+            }
+
+            // Step 2: Recurse into children first
+            foreach (var line in node.OutgoingLines)
+            {
+                var childNode = allNodes.First(nw => nw.Node.Id == line.Connection.EndPinId);
+                PropagateErrors(childNode,allNodes);
+            }
+
+            // Step 3: If all child lines have error → mark parent line
+            if (node.OutgoingLines.Count > 0 &&
+                node.OutgoingLines.All(l => l.HasError))
+            {
+                if (node.ParentLine != null)
+                {
+                    node.ParentLine.HasError = true;
+                }
+            }
+        }
+
+
     }
 }
