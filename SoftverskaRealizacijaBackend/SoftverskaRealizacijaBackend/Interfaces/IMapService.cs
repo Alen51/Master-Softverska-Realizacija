@@ -12,5 +12,6 @@ namespace SoftverskaRealizacijaBackend.Interfaces
         Task<MapDataDto> GetMapDataDto();
         Task<Kvar> AddKvar(Kvar newKvar);
         Task<List<KvarDto>> GetKvarListDto();
+        Task FindErrorOrigin(NodeHelper nodeHelper);
     }
 }
