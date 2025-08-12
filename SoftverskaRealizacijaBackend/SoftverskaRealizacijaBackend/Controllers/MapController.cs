@@ -44,6 +44,13 @@ namespace SoftverskaRealizacijaBackend.Controllers
             return Ok(kvarList);
         }
 
+        [HttpGet("getErrorOrigin")]
+        public async Task<IActionResult> GetErrorOrigin()
+        {
+            List<LineHelper> lh = await _mapService.FindErrorOrigin();
+            return Ok(lh);
+        } 
+
         [HttpPost("addNode")]
         public async Task<IActionResult> AddNode([FromBody] Node node)
         {
