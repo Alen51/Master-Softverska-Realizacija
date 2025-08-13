@@ -111,6 +111,31 @@ const ClientMap = () =>{
         }
     }
 
+    const handleLine= (line,startPin,endPin)=>{
+        if(line.hasError){
+            return <Polyline
+                        key={line.id}
+                        positions={[
+                        [startPin.latitude, startPin.longitude],
+                        [endPin.latitude, endPin.longitude],
+                        ]}
+                        
+                        color="black"
+                    />
+        }
+        else{
+            return <Polyline
+                        key={line.id}
+                        positions={[
+                        [startPin.latitude, startPin.longitude],
+                        [endPin.latitude, endPin.longitude],
+                        ]}
+                        
+                        color="blue"
+                    />
+        }
+    }
+
     const getMpaData = () =>{
 
         getNodes();
@@ -160,18 +185,14 @@ const ClientMap = () =>{
                 ))}
 
                 {lines.map((line) => {
+                    
                     const startPin = nodes.find(p => p.id === line.startPinId);
                     const endPin = nodes.find(p => p.id === line.endPinId);
+
                     return startPin && endPin ? (
-                    <Polyline
-                        key={line.id}
-                        positions={[
-                        [startPin.latitude, startPin.longitude],
-                        [endPin.latitude, endPin.longitude],
-                        ]}
-                        color="blue"
-                    />
+                    handleLine(line,startPin,endPin)
                     ) : null;
+
                 })}
             </MapContainer>
             </div>
