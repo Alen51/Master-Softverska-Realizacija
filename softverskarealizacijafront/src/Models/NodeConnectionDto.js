@@ -3,6 +3,6 @@ export default class NodeConnectionDto{
         this.id=data.id;
         this.startPinId=data.startPinId;
         this.endPinId=data.endPinId;
-        this.hasError=data.hasError
+        this.hasError=data.hasError;
     }
 }

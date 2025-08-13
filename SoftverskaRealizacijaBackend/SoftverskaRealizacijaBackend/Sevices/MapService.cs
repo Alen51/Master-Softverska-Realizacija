@@ -93,7 +93,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
 
         }
 
-        public async Task FindErrorOrigin(NodeHelper nodeHelper)
+        public async Task<List<LineHelper>> FindErrorOrigin()
         {
             List<Node> nodes = await _dbContext.Nodes.ToListAsync();
             List<Kvar> errors = await _dbContext.Kvarovi.ToListAsync();
@@ -108,10 +108,15 @@ namespace SoftverskaRealizacijaBackend.Sevices
                 PropagateErrors(root,allNodes);
             }
 
+            foreach (var line in lineMap.Values)
+            {
+                var dbLine = _dbContext.NodeConnections.First(l => l.Id == line.Connection.Id);
+                dbLine.HasError = line.HasError; 
+            }
+            _dbContext.SaveChangesAsync();
 
 
-
-            return;
+            return lineMap.Values.ToList();
         }
 
         public (List<NodeHelper>, Dictionary<int, LineHelper> lineMap) BuildTree(
@@ -163,6 +168,10 @@ namespace SoftverskaRealizacijaBackend.Sevices
                 if (node.ParentLine != null)
                 {
                     node.ParentLine.HasError = true;
+                    foreach (var line in node.OutgoingLines)
+                    {
+                        line.HasError = false;
+                    }
                 }
             }
         }

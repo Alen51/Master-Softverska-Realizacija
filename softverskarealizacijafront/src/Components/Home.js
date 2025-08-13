@@ -115,6 +115,32 @@ const Home = () => {
         }
       }
     };
+
+    const handleLine= (line,startPin,endPin)=>{
+            if(line.hasError){
+              return <Polyline
+                            key={line.id}
+                            positions={[
+                            [startPin.latitude, startPin.longitude],
+                            [endPin.latitude, endPin.longitude],
+                            ]}
+                            
+                            color="red"
+                        />
+            }
+            if(line.hasError==false){
+                return <Polyline
+                            key={line.id}
+                            positions={[
+                            [startPin.latitude, startPin.longitude],
+                            [endPin.latitude, endPin.longitude],
+                            ]}
+                            
+                            color="blue"
+                        />
+            }
+        }
+    
         
     
 
@@ -161,6 +187,9 @@ const Home = () => {
                   <td>
                     {line.endPinId}
                   </td>
+                  <td>
+                    {line.hasError}
+                  </td>
                   
                 </tr>
               
@@ -199,7 +228,7 @@ const Home = () => {
                 {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
               </button>
               <button className="ui blue button" onClick={() => setAddingLineMode(!addingLineMode)}>
-                {addingMode ? 'Disable Adding Lines' : 'Enable Adding Lines'}
+                {addingLineMode ? 'Disable Adding Lines' : 'Enable Adding Lines'}
               </button>
               
               
@@ -240,14 +269,7 @@ const Home = () => {
                   const startPin = nodes.find(p => p.id === line.startPinId);
                   const endPin = nodes.find(p => p.id === line.endPinId);
                   return startPin && endPin ? (
-                    <Polyline
-                      key={line.id}
-                      positions={[
-                        [startPin.latitude, startPin.longitude],
-                        [endPin.latitude, endPin.longitude],
-                      ]}
-                      color="blue"
-                    />
+                    handleLine(line,startPin,endPin)
                   ) : null;
                 })}
             </MapContainer>
