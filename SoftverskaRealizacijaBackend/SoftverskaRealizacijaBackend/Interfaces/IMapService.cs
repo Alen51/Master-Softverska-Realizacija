@@ -13,5 +13,6 @@ namespace SoftverskaRealizacijaBackend.Interfaces
         Task<Kvar> AddKvar(Kvar newKvar);
         Task<List<KvarDto>> GetKvarListDto();
         Task<List<LineHelper>> FindErrorOrigin();
+        Task<NodeConnectionDto> FixError(int lineId);
     }
 }

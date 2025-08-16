@@ -68,5 +68,11 @@ namespace SoftverskaRealizacijaBackend.Controllers
         {
             return Ok(await _mapService.AddKvar(kvar));
         }
+
+        [HttpPost("fixError")]
+        public async Task<IActionResult> FixError([FromBody] int lineId)
+        {
+            return Ok(await _mapService.FixError(lineId));
+        }
     }
 }
