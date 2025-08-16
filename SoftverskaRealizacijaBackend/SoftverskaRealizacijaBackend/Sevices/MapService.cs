@@ -4,7 +4,9 @@ using SoftverskaRealizacijaBackend.Dto;
 using SoftverskaRealizacijaBackend.Infrastructure;
 using SoftverskaRealizacijaBackend.Interfaces;
 using SoftverskaRealizacijaBackend.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static SoftverskaRealizacijaBackend.Models.Enumerations;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SoftverskaRealizacijaBackend.Sevices
@@ -27,10 +29,17 @@ namespace SoftverskaRealizacijaBackend.Sevices
             {
                 return null;
             }
-
-            _dbContext.Kvarovi.Add(newKvar);
-            await _dbContext.SaveChangesAsync();
-
+            if (_dbContext.Kvarovi.Where(k => k.Node == newKvar.Node && k.StanjeKvara == Enumerations.StanjeKvara.Aktivan) != null)
+            {
+                _dbContext.Kvarovi.Add(newKvar);
+                await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                _dbContext.Kvarovi.Add(newKvar);
+                await _dbContext.SaveChangesAsync();
+                FindErrorOrigin();
+            }
             return newKvar;
         }
 
@@ -99,7 +108,9 @@ namespace SoftverskaRealizacijaBackend.Sevices
             List<Kvar> errors = await _dbContext.Kvarovi.ToListAsync();
             List<NodeConnection> connections = await _dbContext.NodeConnections.ToListAsync();
 
-            var (allNodes, lineMap) = BuildTree(nodes, connections, errors);
+            var (nodeMap, lineMap) = BuildTree(nodes, connections, errors);
+
+            var allNodes = nodeMap.Values.ToList();
 
             var rootNodes = allNodes.Where(n => n.ParentLine == null);
 
@@ -119,7 +130,29 @@ namespace SoftverskaRealizacijaBackend.Sevices
             return lineMap.Values.ToList();
         }
 
-        public (List<NodeHelper>, Dictionary<int, LineHelper> lineMap) BuildTree(
+        public async Task<NodeConnectionDto> FixError(int lineId)
+        {
+            List<Node> nodes = await _dbContext.Nodes.ToListAsync();
+            List<Kvar> errors = await _dbContext.Kvarovi.ToListAsync();
+            List<NodeConnection> connections = await _dbContext.NodeConnections.ToListAsync();
+
+            var (allNodes, lineMap) = BuildTree(nodes, connections, errors);
+
+            if (!lineMap.TryGetValue(lineId, out var line))
+                throw new Exception($"Line with ID {lineId} not found.");
+
+
+
+            FixLineAndDescendants(lineId,lineMap,allNodes);
+
+            _dbContext.SaveChanges();
+
+            NodeConnectionDto outNode = new NodeConnectionDto();
+
+            return _mapper.Map(_dbContext.NodeConnections.Find(lineId), outNode);
+        }
+
+        public (Dictionary<int, NodeHelper>, Dictionary<int, LineHelper> lineMap) BuildTree(
                                     List<Node> nodes,
                                     List<NodeConnection> connections,
                                     List<Kvar> errors)
@@ -127,7 +160,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
             var nodeMap = nodes.ToDictionary(n => n.Id, n => new NodeHelper
             {
                 Node = n,
-                HasError = errors.Any(e => e.Node == n.Id && e.StanjeKvara==Enumerations.StanjeKvara.Aktivan)
+                HasError = errors.Any(e => e.Node == n.Id && e.StanjeKvara == Enumerations.StanjeKvara.Aktivan)
             });
 
             var lineMap = new Dictionary<int, LineHelper>();
@@ -144,10 +177,10 @@ namespace SoftverskaRealizacijaBackend.Sevices
                 childNode.ParentLine = lineHelper;
             }
 
-            return (nodeMap.Values.ToList(),lineMap);
+            return (nodeMap, lineMap);
         }
 
-        void PropagateErrors(NodeHelper node, List<NodeHelper> allNodes) 
+        void PropagateErrors(NodeHelper node, List<NodeHelper> allNodes)
         {
             if (node.HasError && node.ParentLine != null)
             {
@@ -158,7 +191,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
             foreach (var line in node.OutgoingLines)
             {
                 var childNode = allNodes.First(nw => nw.Node.Id == line.Connection.EndPinId);
-                PropagateErrors(childNode,allNodes);
+                PropagateErrors(childNode, allNodes);
             }
 
             // Step 3: If all child lines have error → mark parent line
@@ -176,6 +209,42 @@ namespace SoftverskaRealizacijaBackend.Sevices
             }
         }
 
+        public void FixLineAndDescendants(int lineId, Dictionary<int, LineHelper> lineMap,
+                                                      Dictionary<int, NodeHelper> nodeMap)
+        {
+            if (!lineMap.TryGetValue(lineId, out var line))
+                return;
 
+            // Fix this line
+            line.HasError = false;
+            _dbContext.Update(line.Connection);
+
+            var node = nodeMap[line.Connection.EndPinId];
+
+            var endNode = nodeMap[line.Connection.EndPinId];
+            var activeErrors = _dbContext.Kvarovi
+                .Where(e => e.Node == endNode.Node.Id && e.StanjeKvara == StanjeKvara.Aktivan)
+                .ToList();
+
+            foreach (var err in activeErrors)
+            {
+                err.StanjeKvara = StanjeKvara.Popravljen;
+                err.VremeOtkanjanja = DateTime.UtcNow;
+                _dbContext.Update(err);
+            }
+
+            // 3. Cascade downwards only if ALL outgoing lines from this node
+            // lead to end-nodes that *still* have active errors
+            if (endNode.OutgoingLines.Count > 0 &&
+                endNode.OutgoingLines.All(l =>
+                    _dbContext.Kvarovi.Any(e =>
+                        e.Node == l.Connection.EndPinId && e.StanjeKvara == StanjeKvara.Aktivan)))
+            {
+                foreach (var childLine in endNode.OutgoingLines)
+                {
+                    FixLineAndDescendants(childLine.Connection.Id, lineMap, nodeMap);
+                }
+            }
+        }
     }
 }

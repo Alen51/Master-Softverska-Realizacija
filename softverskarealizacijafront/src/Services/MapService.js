@@ -148,3 +148,27 @@ const ADD_KVAR_URI="/map/addKvar"
     }
 }
 
+export const fixError = async(lineId)=>{
+    const FIX_ERROR_URI="/map/fixError"
+
+   
+    try{
+        const {data}=await axios.post(
+            `${process.env.REACT_APP_API_BACK}${FIX_ERROR_URI}`,
+            lineId,
+            {
+                headers: {
+                "Content-Type": "application/json",
+                
+                },
+                withCredentials:true
+            }
+        );
+        return data;
+
+    }catch(err){
+        alert("Nesto se desilo prilikom popravljanja kvara");
+        return null;
+    }
+}
+
