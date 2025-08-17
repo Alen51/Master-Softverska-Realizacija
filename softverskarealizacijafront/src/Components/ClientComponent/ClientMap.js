@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { GetNodeConnections, GetNodes , getKvarList, addKvar } from "../../Services/MapService";
+import { GetNodeConnections, GetNodes , getKvarList, addKvar, addKvar2 } from "../../Services/MapService";
 import { useNavigate } from "react-router-dom";
 
 
@@ -14,6 +14,7 @@ const ClientMap = () =>{
     const [lines, setLines] = useState([]);
     const [errors, setErrors] = useState([]);
     const [korisnikId, setKorisnikId]= useState([]);
+    const [reportMode, setReportMode] = useState(false);
 
     const customIcon = new Icon({
         
@@ -46,12 +47,28 @@ const ClientMap = () =>{
             const newError = addKvar(kvarJSON);
             console.log("New error:",newError);
             //setErrors([...errors, newError]);
+            getMapData();
             alert(`Reported problem for pin ID: ${pinId}`);
+
 
         } catch (error) {
             console.error('Failed to report problem:', error);
         }
 
+    };
+
+    const reportProblem2 = async (latlng) =>{
+        try{
+
+            const kvarJSON = JSON.stringify({ latitude: latlng.lat, longitude: latlng.lng, clientId:korisnikId});
+            console.log("New kvar",kvarJSON);
+            const newError= addKvar2(kvarJSON);
+            console.log("New error:",newError);
+            //getMapData();
+
+        }catch(error){
+            console.error('Failed to report problem:', error);
+        }
     };
 
     const getNodes = async () => {
@@ -136,7 +153,7 @@ const ClientMap = () =>{
         }
     }
 
-    const getMpaData = () =>{
+    const getMapData = () =>{
 
         getNodes();
         getLines();
@@ -149,21 +166,24 @@ const ClientMap = () =>{
         <h1>Client Map</h1>
         <div className="buttons-flex">
             
-            <button className="ui blue button" onClick={() => getMpaData()}>
+            <button className="ui blue button" onClick={() => getMapData()}>
             Map data
             </button>
             
-
+        <button className="ui blue button" onClick={() => setReportMode(!reportMode)}>
+                {reportMode ? 'Disable Error report' : 'Enable Error report'}
+              </button>
 
 
         </div>
         <div></div>
         <div className="test">
-            <MapContainer center={[45.2396,19.8227]} zoom={15}>
+            <MapContainer center={[45.2396,19.8227]} zoom={15} >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                <MapClickHandler reportMode={reportMode} reportProblem2={reportProblem2} />
                 
                 {nodes.map((node)=>(
                     <Marker key={node.id} position={[node.latitude, node.longitude]} icon={customIcon} 
@@ -202,5 +222,16 @@ const ClientMap = () =>{
     </div>
    );
 }
+
+const MapClickHandler = ({ reportMode, reportProblem2 }) => {
+    useMapEvents({
+      click: (e) => {
+        if (reportMode) {
+          reportProblem2(e.latlng); 
+        }
+      },
+    });
+    return null;
+  };
 
 export default ClientMap;

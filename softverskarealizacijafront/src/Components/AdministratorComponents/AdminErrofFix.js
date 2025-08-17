@@ -24,6 +24,7 @@ const AdminErrorFix = () =>{
     const fixErrorLine = async (lineId) =>{
 
         const data = await fixError(lineId);
+        console.log("Line ID",lineId);
         getLines();
 
     }
@@ -66,7 +67,7 @@ const AdminErrorFix = () =>{
                         {line.id}
                     </td>
                     <td>
-                        {handleButton()}
+                        {handleButton(line)}
                     </td>
                 </tr>
             ))}

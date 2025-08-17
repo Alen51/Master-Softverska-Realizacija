@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SoftverskaRealizacijaBackend.Dto;
+using SoftverskaRealizacijaBackend.Helpers;
 using SoftverskaRealizacijaBackend.Infrastructure;
 using SoftverskaRealizacijaBackend.Interfaces;
 using SoftverskaRealizacijaBackend.Models;
@@ -25,17 +26,56 @@ namespace SoftverskaRealizacijaBackend.Sevices
 
         public async Task<Kvar> AddKvar(Kvar newKvar)
         {
-            if(_dbContext.Kvarovi.Contains(newKvar))
+            if(_dbContext.Kvarovi.Where(k=>k.Node==newKvar.Node && k.Client==newKvar.Client && k.StanjeKvara == Enumerations.StanjeKvara.Aktivan) !=null)
             {
                 return null;
             }
             if (_dbContext.Kvarovi.Where(k => k.Node == newKvar.Node && k.StanjeKvara == Enumerations.StanjeKvara.Aktivan) != null)
             {
+                newKvar.VremePrijave= DateTime.UtcNow;
                 _dbContext.Kvarovi.Add(newKvar);
                 await _dbContext.SaveChangesAsync();
             }
             else
             {
+                newKvar.VremePrijave = DateTime.UtcNow;
+                _dbContext.Kvarovi.Add(newKvar);
+                await _dbContext.SaveChangesAsync();
+                FindErrorOrigin();
+            }
+            return newKvar;
+        }
+
+        public async Task<Kvar> AddKvar2(ErrorDataDto newError)
+        {
+            
+            Kvar newKvar = new Kvar();
+            
+            newKvar.Client = newError.ClientId;
+            newKvar.StanjeKvara = StanjeKvara.Aktivan;
+
+            //logika za nodeId
+
+            var allNodes = _dbContext.Nodes.ToList();
+            var nearestNode = MapHelper.FindNearestNode(newError.Latitude, newError.Longitude, allNodes);
+
+            if(nearestNode == null) { return null; }
+
+            newKvar.Node = nearestNode.Id;
+
+            if (_dbContext.Kvarovi.Contains(newKvar))
+            {
+                return null;
+            }
+            if (_dbContext.Kvarovi.Where(k => k.Node == newKvar.Node && k.StanjeKvara == Enumerations.StanjeKvara.Aktivan) != null)
+            {
+                newKvar.VremePrijave = DateTime.UtcNow;
+                _dbContext.Kvarovi.Add(newKvar);
+                await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                newKvar.VremePrijave = DateTime.UtcNow;
                 _dbContext.Kvarovi.Add(newKvar);
                 await _dbContext.SaveChangesAsync();
                 FindErrorOrigin();
@@ -107,8 +147,8 @@ namespace SoftverskaRealizacijaBackend.Sevices
             List<Node> nodes = await _dbContext.Nodes.ToListAsync();
             List<Kvar> errors = await _dbContext.Kvarovi.ToListAsync();
             List<NodeConnection> connections = await _dbContext.NodeConnections.ToListAsync();
-
-            var (nodeMap, lineMap) = BuildTree(nodes, connections, errors);
+            
+            var (nodeMap, lineMap) = MapHelper.BuildTree(nodes, connections, errors);
 
             var allNodes = nodeMap.Values.ToList();
 
@@ -116,7 +156,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
 
             foreach (var root in rootNodes)
             {
-                PropagateErrors(root,allNodes);
+                MapHelper.PropagateErrors(root,allNodes);
             }
 
             foreach (var line in lineMap.Values)
@@ -135,23 +175,24 @@ namespace SoftverskaRealizacijaBackend.Sevices
             List<Node> nodes = await _dbContext.Nodes.ToListAsync();
             List<Kvar> errors = await _dbContext.Kvarovi.ToListAsync();
             List<NodeConnection> connections = await _dbContext.NodeConnections.ToListAsync();
-
-            var (allNodes, lineMap) = BuildTree(nodes, connections, errors);
+            
+            var (allNodes, lineMap) = MapHelper.BuildTree(nodes, connections, errors);
 
             if (!lineMap.TryGetValue(lineId, out var line))
                 throw new Exception($"Line with ID {lineId} not found.");
 
 
 
-            FixLineAndDescendants(lineId,lineMap,allNodes);
+            MapHelper.FixLineAndDescendants(lineId,lineMap,allNodes, _dbContext);
 
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
 
             NodeConnectionDto outNode = new NodeConnectionDto();
 
             return _mapper.Map(_dbContext.NodeConnections.Find(lineId), outNode);
         }
-
+        
+        
         public (Dictionary<int, NodeHelper>, Dictionary<int, LineHelper> lineMap) BuildTree(
                                     List<Node> nodes,
                                     List<NodeConnection> connections,
@@ -216,8 +257,8 @@ namespace SoftverskaRealizacijaBackend.Sevices
                 return;
 
             // Fix this line
-            line.HasError = false;
-            _dbContext.Update(line.Connection);
+            line.Connection.HasError = false;
+            _dbContext.NodeConnections.Update(line.Connection);
 
             var node = nodeMap[line.Connection.EndPinId];
 
@@ -246,5 +287,24 @@ namespace SoftverskaRealizacijaBackend.Sevices
                 }
             }
         }
+
+        public Node FindNearestNode(double lat, double lon, IEnumerable<Node> allNodes)
+        {
+            Node nearest = null;
+            double minDist = double.MaxValue;
+
+            foreach (var node in allNodes)
+            {
+                var dist = GeoUtils.Haversine(lat, lon, node.Latitude, node.Longitude);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    nearest = node;
+                }
+            }
+
+            return nearest;
+        }
+        
     }
 }

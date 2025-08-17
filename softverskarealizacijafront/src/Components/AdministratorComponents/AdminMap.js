@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const AdminMap = () =>{
 
       const [nodes,setNodes] = useState([]);
-          const [loading, setLoading] = useState(true);
+          const [loading, setLoading] = useState(false);
           const [lines, setLines] = useState([]);
           const [errors, setErrors] = useState([]);
           const [addingMode, setAddingMode] = useState(false);
@@ -148,7 +148,7 @@ const AdminMap = () =>{
     
     
         return(
-          <div className="verification-container">
+          <div>
             <h1 color="red" className="ui blue center aligned header">
 
             Dobrodosli na stranicu
@@ -166,14 +166,7 @@ const AdminMap = () =>{
             }
             {!loading && (  
                 <>
-                <h1 className="ui blue center aligned icon header">
-                    <i className="briefcase icon"></i>
-                    Dobro dosli na stranicu 
-                    <div className="sub header">
-                        Pre nego sto nastavite dalje, molimo Vas ulogujte se na Vas nalog <br/>
-                        Ako vec niste logovani, molimo Vas da se registrujete
-                    </div>
-                </h1>
+                
                
                 <div className="buttons-flex">
                 <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>

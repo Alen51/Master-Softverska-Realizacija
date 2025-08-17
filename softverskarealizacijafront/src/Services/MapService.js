@@ -148,6 +148,29 @@ const ADD_KVAR_URI="/map/addKvar"
     }
 }
 
+export const addKvar2 = async(newKvar)=>{
+const ADD_KVAR_URI="/map/addKvar2"
+
+    try{
+        const {data}=await axios.post(
+            `${process.env.REACT_APP_API_BACK}${ADD_KVAR_URI}`,
+            newKvar,
+            {
+                headers: {
+                "Content-Type": "application/json",
+                
+                },
+                withCredentials:true
+            }
+        );
+        return data;
+
+    }catch(err){
+        alert("Nesto se desilo prilikom dodavanja Kvara na mapu");
+        return null;
+    }
+}
+
 export const fixError = async(lineId)=>{
     const FIX_ERROR_URI="/map/fixError"
 

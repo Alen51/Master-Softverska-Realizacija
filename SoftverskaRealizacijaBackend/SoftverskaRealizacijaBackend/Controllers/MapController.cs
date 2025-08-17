@@ -68,6 +68,12 @@ namespace SoftverskaRealizacijaBackend.Controllers
         {
             return Ok(await _mapService.AddKvar(kvar));
         }
+        
+        [HttpPost("addKvar2")]
+        public async Task<IActionResult> AddKvar2([FromBody] ErrorDataDto newError)
+        {
+            return Ok(_mapService.AddKvar2(newError));
+        }
 
         [HttpPost("fixError")]
         public async Task<IActionResult> FixError([FromBody] int lineId)

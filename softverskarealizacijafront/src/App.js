@@ -8,6 +8,7 @@ import Registration from './Components/LoginAndRegisterComponents/Registration';
 import AdminDashboard from './Components/AdministratorComponents/AdminDashboard';
 import AdminMap from './Components/AdministratorComponents/AdminMap';
 import AdminErrors from './Components/AdministratorComponents/AdminErrors';
+import AdminErrorFix from './Components/AdministratorComponents/AdminErrofFix';
 import Profil from './Components/ProfileComponents/Profile';
 import ClientMap from './Components/ClientComponent/ClientMap';
 import ClientErrors from './Components/ClientComponent/ClientErrors';
@@ -40,6 +41,7 @@ function App() {
   }
 
   const handleLogout = () => {
+
     sessionStorage.removeItem('korisnik');
     sessionStorage.removeItem('isAuth');
     sessionStorage.removeItem('token');
@@ -58,6 +60,7 @@ function App() {
     {path: '/adminDashboard', element: <AdminDashboard></AdminDashboard>},
     {path: '/adminMap', element: <AdminMap></AdminMap>},
     {path: '/adminErrors', element:<AdminErrors></AdminErrors>},
+    {path: '/adminErrorFix', element:<AdminErrorFix></AdminErrorFix>},
     {path: '/clientMap', element:<ClientMap></ClientMap>},
     {path: '/clientErrors', element:<ClientErrors></ClientErrors>},
     {path: '/gostMap', element:<GostMap></GostMap>},
