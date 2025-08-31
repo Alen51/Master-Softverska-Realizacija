@@ -57,6 +57,14 @@ const GostMap = () =>{
                 }
         }
 
+        const getMapData = () =>{
+
+        getNodes();
+        getLines();
+        getErrors();
+
+    }
+
         const handleLine= (line,startPin,endPin)=>{
                 if(line.hasError){
                     return <Polyline
@@ -91,21 +99,17 @@ return (
             Dobrodosli na stranicu
 
             </h1>
-           
+            
+            
+            
               
               
               
             
             <div className="buttons-flex">
                             
-                            <button className="ui blue button" onClick={() => getNodes()}>
-                                Get Nodes
-                            </button>
-                            <button className="ui blue button" onClick={() => getLines()}>
-                                Get Lines
-                            </button>
-                            <button className="ui blue button" onClick={() => getErrors()}>
-                                Get Errors
+                            <button className="ui blue button" onClick={() => getMapData()}>
+                            Map data
                             </button>
                             
                             
@@ -150,8 +154,25 @@ return (
                             </div>
 
             
-            
+            <table className="ui fixed blue celled table">
+            {errors.map((e)=>(
+                <tr>
+                  <td>Error</td>
+                  <td>
+                    {e.id}
+                  </td>
+                  <td>
+                    {e.node}
+                  </td>
+                  <td>
+                    {e.stanjeKvara}
+                  </td>
+                  
+                </tr>
+                 ))}
+            </table>
         </div>
+        
     )   
 
 }

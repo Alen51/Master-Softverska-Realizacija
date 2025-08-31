@@ -21,20 +21,41 @@ const AdminErrors = () =>{
         }
     }
 
-    const fixProblem = (errorId) =>{
-        
-    }
+    
 
-    const handlePrikazDugmadi = (error) => {
+    const handleStatus = (error) => {
 
         if(error.stanjeKvara == "Aktivan" ){
-            return  <button className="ui red button" onClick={() => fixProblem(error.id)}>Fix Problem</button>
-                       
+            return  <td><h color="red">{error.stanjeKvara}</h></td> 
         }
         else {
-            return    null; 
+           return  <td><h color="blue">{error.stanjeKvara}</h></td> 
         }
     }
+
+     const formatDate = (dateString) => {
+       console.log("Incoming date raw:", dateString);
+
+        // if empty or default .NET "0001" value
+        if (!dateString || dateString.startsWith("0001")) {
+            return "—";
+        }
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            console.warn("Invalid parsed date:", dateString);
+            return "—";
+        }
+
+        return date.toLocaleString("sr-RS", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    };
     
 
     return (
@@ -66,15 +87,12 @@ const AdminErrors = () =>{
                     <td>
                         {error.client}
                     </td>
-                    <td>
-                        {error.vremmePrijave}
-                    </td>
-                    <td>
-                        {error.stanjeKvara}
-                    </td>
-                    <td>
-                        {handlePrikazDugmadi(error)}
-                    </td>
+                    <td>{formatDate(error.vremePrijave)}</td>
+                    <td>{formatDate(error.
+                    vremeOtkanjanja
+                    )}</td>
+                    {handleStatus(error)}
+                    
                 </tr>
             ))}
             </table>

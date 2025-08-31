@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {MapContainer, TileLayer, Marker, Polyline,Popup, useMapEvents} from "react-leaflet" 
 import { Icon, divIcon, point } from "leaflet";
-import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection, addKvar, getKvarList } from "../../Services/MapService";
+import { getMapInfo, addNode, GetNodeConnections, GetNodes, addNodeConnection, addKvar, getKvarList, findError } from "../../Services/MapService";
 import { useNavigate } from "react-router-dom";
 
 const AdminMap = () =>{
@@ -145,13 +145,29 @@ const AdminMap = () =>{
               console.log("Errors:",errors);
           }
       }
+
+      const getMapData = () =>{
+
+        getNodes();
+        getLines();
+        getErrors();
+
+    }
+
+    const findErrorOrigin = async () =>{
+        const data = await findError();
+        if(data !== null){
+              
+              console.log("Error Lines:",errors);
+          }
+    }
     
     
         return(
           <div>
             <h1 color="red" className="ui blue center aligned header">
 
-            Dobrodosli na stranicu
+            Admin Mapa
 
             </h1>
             {loading && 
@@ -172,20 +188,17 @@ const AdminMap = () =>{
                 <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
                                 {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
                             </button>
-                            <button className="ui blue button" onClick={() => getNodes()}>
-                                Get Nodes
-                            </button>
-                            <button className="ui blue button" onClick={() => getLines()}>
-                                Get Lines
-                            </button>
-                            <button className="ui blue button" onClick={() => getErrors()}>
-                                Get Errors
+                           <button className="ui blue button" onClick={() => getMapData()}>
+                            Map data
                             </button>
                             <button className="ui blue button" onClick={() => setAddingMode(!addingMode)}>
                               {addingMode ? 'Disable Adding Pins' : 'Enable Adding Pins'}
                             </button>
                             <button className="ui blue button" onClick={() => setAddingLineMode(!addingLineMode)}>
                               {addingMode ? 'Disable Adding Lines' : 'Enable Adding Lines'}
+                            </button>
+                            <button className="ui blue button" onClick={() => findErrorOrigin()}>
+                            Find Error Origin
                             </button>
                 
                 </div>

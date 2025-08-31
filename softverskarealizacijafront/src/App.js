@@ -9,6 +9,7 @@ import AdminDashboard from './Components/AdministratorComponents/AdminDashboard'
 import AdminMap from './Components/AdministratorComponents/AdminMap';
 import AdminErrors from './Components/AdministratorComponents/AdminErrors';
 import AdminErrorFix from './Components/AdministratorComponents/AdminErrofFix';
+import AdminUsers from './Components/AdministratorComponents/AminUsers';
 import Profil from './Components/ProfileComponents/Profile';
 import ClientMap from './Components/ClientComponent/ClientMap';
 import ClientErrors from './Components/ClientComponent/ClientErrors';
@@ -61,6 +62,7 @@ function App() {
     {path: '/adminMap', element: <AdminMap></AdminMap>},
     {path: '/adminErrors', element:<AdminErrors></AdminErrors>},
     {path: '/adminErrorFix', element:<AdminErrorFix></AdminErrorFix>},
+    {path: '/adminUsers', element:<AdminUsers></AdminUsers>},
     {path: '/clientMap', element:<ClientMap></ClientMap>},
     {path: '/clientErrors', element:<ClientErrors></ClientErrors>},
     {path: '/gostMap', element:<GostMap></GostMap>},

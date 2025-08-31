@@ -53,33 +53,40 @@ namespace SoftverskaRealizacijaBackend.Helpers
             return (nodeMap, lineMap);
         }
 
-        public static void PropagateErrors(NodeHelper node, List<NodeHelper> allNodes)
+        public static void PropagateErrors(NodeHelper node, List<NodeHelper> allNodes, HashSet<int> visited)
         {
+                if (visited.Contains(node.Node.Id))
+                    return; // već posećen, prekini ciklus
+
+                visited.Add(node.Node.Id);
+
             if (node.HasError && node.ParentLine != null)
-            {
-                node.ParentLine.HasError = true;
-            }
-
-            // Step 2: Recurse into children first
-            foreach (var line in node.OutgoingLines)
-            {
-                var childNode = allNodes.First(nw => nw.Node.Id == line.Connection.EndPinId);
-                PropagateErrors(childNode, allNodes);
-            }
-
-            // Step 3: If all child lines have error → mark parent line
-            if (node.OutgoingLines.Count > 0 &&
-                node.OutgoingLines.All(l => l.HasError))
-            {
-                if (node.ParentLine != null)
                 {
                     node.ParentLine.HasError = true;
-                    foreach (var line in node.OutgoingLines)
+                }
+
+                // Step 2: Recurse into children first
+                foreach (var line in node.OutgoingLines)
+                {
+                    var childNode = allNodes.First(nw => nw.Node.Id == line.Connection.EndPinId);
+                    PropagateErrors(childNode, allNodes, visited);
+                }
+
+                // Step 3: If all child lines have error → mark parent line
+                if (node.OutgoingLines.Count > 0 &&
+                    node.OutgoingLines.All(l => l.HasError))
+                {
+                    if (node.ParentLine != null)
                     {
-                        line.HasError = false;
+                        node.ParentLine.HasError = true;
+                        foreach (var line in node.OutgoingLines)
+                        {
+                            line.HasError = false;
+                        }
                     }
                 }
-            }
+            
+            
         }
 
         public static void FixLineAndDescendants(int lineId, Dictionary<int, LineHelper> lineMap,

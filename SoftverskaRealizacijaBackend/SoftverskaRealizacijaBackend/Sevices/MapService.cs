@@ -26,7 +26,8 @@ namespace SoftverskaRealizacijaBackend.Sevices
 
         public async Task<Kvar> AddKvar(Kvar newKvar)
         {
-            if(_dbContext.Kvarovi.Where(k=>k.Node==newKvar.Node && k.Client==newKvar.Client && k.StanjeKvara == Enumerations.StanjeKvara.Aktivan) !=null)
+            if(_dbContext.Kvarovi.Where(k=>k.Node==newKvar.Node && k.Client==newKvar.Client 
+                                        && k.StanjeKvara == Enumerations.StanjeKvara.Aktivan) !=null)
             {
                 return null;
             }
@@ -41,7 +42,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
                 newKvar.VremePrijave = DateTime.UtcNow;
                 _dbContext.Kvarovi.Add(newKvar);
                 await _dbContext.SaveChangesAsync();
-                FindErrorOrigin();
+               
             }
             return newKvar;
         }
@@ -78,7 +79,7 @@ namespace SoftverskaRealizacijaBackend.Sevices
                 newKvar.VremePrijave = DateTime.UtcNow;
                 _dbContext.Kvarovi.Add(newKvar);
                 await _dbContext.SaveChangesAsync();
-                FindErrorOrigin();
+               
             }
             return newKvar;
         }
@@ -154,9 +155,11 @@ namespace SoftverskaRealizacijaBackend.Sevices
 
             var rootNodes = allNodes.Where(n => n.ParentLine == null);
 
+            var visited = new HashSet<int>();
+
             foreach (var root in rootNodes)
             {
-                MapHelper.PropagateErrors(root,allNodes);
+                MapHelper.PropagateErrors(root,allNodes, visited);
             }
 
             foreach (var line in lineMap.Values)

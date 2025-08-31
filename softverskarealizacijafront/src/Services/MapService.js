@@ -195,3 +195,26 @@ export const fixError = async(lineId)=>{
     }
 }
 
+export const findError = async()=>{
+    const GET_ERROR_ORIGIN="/map/getErrorOrigin"
+
+    try{
+        const { data } = await axios.get(
+            `${process.env.REACT_APP_API_BACK}${GET_ERROR_ORIGIN}`,
+                {
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        
+                    },
+                   
+                }
+            );
+            console.log(data)
+        
+        return data;
+    }catch(err){
+        alert("Nesto se desilo prilikom dobavljanja informacija o kvarovima");
+        return null;
+    }
+}
+

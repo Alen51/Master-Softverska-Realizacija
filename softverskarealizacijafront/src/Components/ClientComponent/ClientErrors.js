@@ -21,6 +21,31 @@ const ClientErrors = () =>{
         }
     }
 
+    const formatDate = (dateString) => {
+       console.log("Incoming date raw:", dateString);
+
+        // if empty or default .NET "0001" value
+        if (!dateString || dateString.startsWith("0001")) {
+            return "—";
+        }
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            console.warn("Invalid parsed date:", dateString);
+            return "—";
+        }
+
+        return date.toLocaleString("sr-RS", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    };
+
+
 
 
 
@@ -41,21 +66,28 @@ const ClientErrors = () =>{
                     Error reporting time
                 </td>
                 <td>
+                    Error fix time
+                </td>
+                <td>
                     Status
                 </td>
 
             </tr>
             {errors.map((error)=>(
                 <tr>
-                    <td>
-                        {error.vremmePrijave}
-                    </td>
+                    <td>{formatDate(error.vremePrijave)}</td>
+                    <td>{formatDate(error.
+                    vremeOtkanjanja
+                    )}</td>
                     <td>
                         {error.stanjeKvara}
                     </td>
                 </tr>
             ))}
+            
+
             </table>
+
 
 
 
